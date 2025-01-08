@@ -16,15 +16,15 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
       const touch = e.touches[0];
       const rect = canvasRef.current?.getBoundingClientRect();
       return {
-        x: touch.clientX - (rect?.left || 0),
-        y: touch.clientY - (rect?.top || 0),
+        x: (touch.clientX - (rect?.left || 0)) / (rect?.width || 1),
+        y: (touch.clientY - (rect?.top || 0)) / (rect?.height || 1),
       };
     }
     if ("clientX" in e) {
       const rect = canvasRef.current?.getBoundingClientRect();
       return {
-        x: e.clientX - (rect?.left || 0),
-        y: e.clientY - (rect?.top || 0),
+        x: (e.clientX - (rect?.left || 0)) / (rect?.width || 1),
+        y: (e.clientY - (rect?.top || 0)) / (rect?.height || 1),
       };
     }
     return { x: 0, y: 0 };
@@ -33,7 +33,6 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
   const startDrawing = (e: MouseEvent | TouchEvent) => {
     isDrawing.current = true; // 开始绘制
     const { x, y } = getEventCoordinates(e);
-    console.log(`Start Drawing at: X=${x}, Y=${y}`);
     setPosition({ x, y }); // 更新全局指针位置
     onPointerUpdate(x, y);
     e.preventDefault();
@@ -42,7 +41,6 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
   const draw = (e: MouseEvent | TouchEvent) => {
     if (!isDrawing.current) return;
     const { x, y } = getEventCoordinates(e);
-    console.log(`Pointer moving at: X=${x}, Y=${y}`);
     setPosition({ x, y }); // 更新全局指针位置
     onPointerUpdate(x, y);
     e.preventDefault();
@@ -50,7 +48,6 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
 
   const stopDrawing = () => {
     if (isDrawing.current) {
-      console.log(`Stop Drawing`);
       isDrawing.current = false; // 停止绘制
     }
   };

@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Pointer from "../components/Pointer";
+import Log from "../components/Log"; // 引入 Log 组件
 
 export default function DrawPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 
   const handlePointerUpdate = (x: number, y: number) => {
-    console.log(`Pointer is at X=${x}, Y=${y}`);
+    // 可以在此添加其他逻辑
   };
 
   useEffect(() => {
@@ -28,6 +29,8 @@ export default function DrawPage() {
 
   return (
     <div>
+      {/* 添加 Log 组件 */}
+      <Log />
       {/* 将 canvasRef 传递给 Pointer */}
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas

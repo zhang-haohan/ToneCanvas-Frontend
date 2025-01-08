@@ -1,0 +1,18 @@
+digraph function_calls {
+  initializeCanvas -> initializeCircles;
+  initializeCanvas -> subscribe;
+  subscribe -> update;
+  update -> clearCanvas;
+  update -> updateCircles;
+  update -> drawCircles;
+  update -> updateAndDrawSparkles;
+  update -> updateAndDrawTrails;
+  update -> createSparkles;
+  update -> createTrail;
+  updateCircles -> update; //循环调用
+  drawCircles -> update; //循环调用
+  updateAndDrawSparkles -> update; //循环调用
+  updateAndDrawTrails -> update; //循环调用
+  createSparkles -> update; //循环调用
+  createTrail -> update; //循环调用
+}

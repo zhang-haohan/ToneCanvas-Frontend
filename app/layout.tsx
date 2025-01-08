@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { PointerProvider } from "./contexts/PointerContext"; // 引入 PointerProvider
+import { PointerProvider } from "../contexts/PointerContext"; // 引入 PointerProvider
 import "./globals.css";
 
 const geistSans = Geist({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Pointer from "../components/Pointer"
+import Pointer from "../components/Pointer";
 
 export default function DrawPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -28,7 +28,7 @@ export default function DrawPage() {
 
   return (
     <div>
-      {/* 传递 canvasRef 给 Pointer */}
+      {/* 将 canvasRef 传递给 Pointer */}
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas
         ref={canvasRef}

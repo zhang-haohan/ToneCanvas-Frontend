@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
+import { usePointerContext } from "../contexts/PointerContext";
 
 interface PointerProps {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
   onPointerUpdate: (x: number, y: number) => void;
 }
 
 export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
-  const isDrawing = useRef(false); // 使用 ref 以避免多次渲染
+  const { position, setPosition, isDrawing } = usePointerContext(); // 从上下文获取状态
 
   const getEventCoordinates = (e: MouseEvent | TouchEvent) => {
     if ("touches" in e && e.touches.length > 0) {
@@ -30,17 +31,19 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
   };
 
   const startDrawing = (e: MouseEvent | TouchEvent) => {
-    isDrawing.current = true;
+    isDrawing.current = true; // 开始绘制
     const { x, y } = getEventCoordinates(e);
     console.log(`Start Drawing at: X=${x}, Y=${y}`);
+    setPosition({ x, y }); // 更新全局指针位置
     onPointerUpdate(x, y);
-    e.preventDefault(); // 防止触摸事件的滚动行为
+    e.preventDefault();
   };
 
   const draw = (e: MouseEvent | TouchEvent) => {
     if (!isDrawing.current) return;
     const { x, y } = getEventCoordinates(e);
     console.log(`Pointer moving at: X=${x}, Y=${y}`);
+    setPosition({ x, y }); // 更新全局指针位置
     onPointerUpdate(x, y);
     e.preventDefault();
   };
@@ -48,7 +51,7 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
   const stopDrawing = () => {
     if (isDrawing.current) {
       console.log(`Stop Drawing`);
-      isDrawing.current = false;
+      isDrawing.current = false; // 停止绘制
     }
   };
 
@@ -56,7 +59,6 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // 添加事件监听
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
@@ -67,7 +69,6 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
     canvas.addEventListener("touchend", stopDrawing);
     canvas.addEventListener("touchcancel", stopDrawing);
 
-    // 清理事件监听
     return () => {
       canvas.removeEventListener("mousedown", startDrawing);
       canvas.removeEventListener("mousemove", draw);
@@ -81,5 +82,5 @@ export default function Pointer({ canvasRef, onPointerUpdate }: PointerProps) {
     };
   }, [canvasRef]);
 
-  return null; // 不渲染任何内容
+  return null;
 }

@@ -10,8 +10,32 @@ export default function TraceButton() {
     const { setFrequencyRange } = useAudioRangeContext(); // 更新频率范围
     const { audioIsInitialized } = usePointerContext(); // 获取音频初始化状态
 
+    // 记录按钮按下日志
+    const logButtonPress = async (buttonName: string) => {
+        try {
+            const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ button_name: buttonName }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to log button press");
+            }
+
+            const result = await response.json();
+            console.log("Button press logged:", result.message);
+        } catch (error) {
+            console.error("Error logging button press:", error);
+        }
+    };
+
     const handleTraceClick = async () => {
         try {
+            await logButtonPress("Trace"); // 记录按钮按下日志
+
             if (isTraceVisible) {
                 // 隐藏指导线
                 const canvas = document.getElementById("trace-canvas") as HTMLCanvasElement;
@@ -96,7 +120,6 @@ export default function TraceButton() {
                         borderRadius: "5px",
                         zIndex: 1000, // 确保按钮在前端可见
                     }}
-                    
                 >
                     {isTraceVisible ? "Hide Trace" : "Show Trace"}
                 </button>

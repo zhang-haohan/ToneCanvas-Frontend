@@ -10,8 +10,32 @@ export default function PitchAudioButton() {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const { audioIsInitialized } = usePointerContext(); // 读取音频初始化状态
 
+    // 记录按钮按下日志
+    const logButtonPress = async (buttonName: string) => {
+        try {
+            const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ button_name: buttonName }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to log button press");
+            }
+
+            const result = await response.json();
+            console.log("Button press logged:", result.message);
+        } catch (error) {
+            console.error("Error logging button press:", error);
+        }
+    };
+
     const handlePlayClick = async () => {
         try {
+            await logButtonPress("Pitch"); // 记录按钮按下日志
+
             if (!isPlaying) {
                 // 请求后端获取音频文件
                 const response = await fetch(`${config.backendUrl}/api/get-pitch-audio`);

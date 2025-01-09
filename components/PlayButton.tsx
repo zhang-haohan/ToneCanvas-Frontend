@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import config from "../public/config.json";
 import { usePointerContext } from "../contexts/PointerContext"; // 使用全局状态上下文
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 使用 CorpusStatus 上下文
@@ -22,21 +22,18 @@ export default function PlayButton() {
   // 查询并更新 CorpusStatus
   const updateCorpusStatus = async () => {
     try {
-      // 调用 /api/get-file-name
       const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`);
       if (!fileNameResponse.ok) {
         throw new Error("Failed to fetch file name");
       }
       const fileNameData = await fileNameResponse.json();
 
-      // 调用 /api/get-progress
       const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`);
       if (!progressResponse.ok) {
         throw new Error("Failed to fetch progress");
       }
       const progressData = await progressResponse.json();
 
-      // 更新上下文中的数据
       if (fileNameData.fileName !== currentFileName) {
         setCurrentFileName(fileNameData.fileName);
       }
@@ -51,19 +48,40 @@ export default function PlayButton() {
     }
   };
 
+  // 记录按钮按下日志
+  const logButtonPress = async (buttonName: string) => {
+    try {
+      const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ button_name: buttonName }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log button press");
+      }
+
+      const result = await response.json();
+      console.log("Button press logged:", result.message);
+    } catch (error) {
+      console.error("Error logging button press:", error);
+    }
+  };
+
   const handlePlayClick = async () => {
     try {
+      await logButtonPress("Play"); // 记录按钮按下日志
       await updateCorpusStatus(); // 更新 CorpusStatus
 
       if (!isPlaying) {
-        // 请求后端获取音频文件
         const response = await fetch(`${config.backendUrl}/api/get-wav-file`);
         if (!response.ok) {
           throw new Error("Failed to fetch audio file");
         }
         const blob = await response.blob();
 
-        // 创建 Audio 对象并播放
         const newAudio = new Audio(URL.createObjectURL(blob));
         newAudio
           .play()
@@ -78,13 +96,11 @@ export default function PlayButton() {
             setConnectionStatus("Failed");
           });
 
-        // 设置音频结束处理
         newAudio.onended = () => {
           setIsPlaying(false);
           console.log("Audio playback finished");
         };
       } else {
-        // 停止播放
         if (audio) {
           audio.pause();
           audio.currentTime = 0;
@@ -114,7 +130,7 @@ export default function PlayButton() {
             color: "white",
             border: "none",
             borderRadius: "5px",
-            zIndex: 1000, // 确保按钮在前端可见
+            zIndex: 1000,
           }}
         >
           {isPlaying ? "Stop" : "Play"}

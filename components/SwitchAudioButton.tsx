@@ -20,21 +20,18 @@ export default function SwitchAudioButton() {
   // 查询并更新 CorpusStatus
   const updateCorpusStatus = async () => {
     try {
-      // 调用 /api/get-file-name
       const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`);
       if (!fileNameResponse.ok) {
         throw new Error("Failed to fetch file name");
       }
       const fileNameData = await fileNameResponse.json();
 
-      // 调用 /api/get-progress
       const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`);
       if (!progressResponse.ok) {
         throw new Error("Failed to fetch progress");
       }
       const progressData = await progressResponse.json();
 
-      // 更新上下文中的数据
       if (fileNameData.fileName !== currentFileName) {
         setCurrentFileName(fileNameData.fileName);
       }
@@ -49,12 +46,34 @@ export default function SwitchAudioButton() {
     }
   };
 
+  // 记录按钮按下日志
+  const logButtonPress = async (buttonName: string) => {
+    try {
+      const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ button_name: buttonName }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log button press");
+      }
+
+      const result = await response.json();
+      console.log("Button press logged:", result.message);
+    } catch (error) {
+      console.error("Error logging button press:", error);
+    }
+  };
+
   const handleSwitchClick = async () => {
     try {
       setIsSwitching(true);
+      await logButtonPress("Switch"); // 记录按钮按下日志
       await updateCorpusStatus(); // 更新 CorpusStatus
 
-      // 请求后端切换音频文件
       const response = await fetch(`${config.backendUrl}/api/switch-wav-file`, {
         method: "POST",
       });

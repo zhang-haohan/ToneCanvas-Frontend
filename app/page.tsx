@@ -8,6 +8,11 @@ import Theremin from "../components/Theremin"; // 引入 Theremin 组件
 import Spark from "../components/Spark"
 import Background from "../components/Background";
 import Trace from "../components/Trace";
+import PlayButton from "../components/PlayButton"
+import SwitchAudioButton from "../components/SwitchAudioButton"
+import TraceButton from "@/components/TraceButton";
+import PitchAudioButton from "@/components/PitchAudioButton";
+
 
 export default function DrawPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -54,6 +59,10 @@ export default function DrawPage() {
       <Theremin />
       <Spark />
       <Trace />
+      <PlayButton />
+      <SwitchAudioButton />
+      <TraceButton />
+      <PitchAudioButton />
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas
         ref={canvasRef}

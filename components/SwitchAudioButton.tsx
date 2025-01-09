@@ -7,7 +7,7 @@ import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 使用 Cor
 
 export default function SwitchAudioButton() {
   const [isSwitching, setIsSwitching] = useState(false);
-  const { audioIsInitialized } = usePointerContext(); // 读取音频初始化状态
+  const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
   const {
     currentFileName,
     setCurrentFileName,
@@ -82,6 +82,8 @@ export default function SwitchAudioButton() {
       }
       const result = await response.json();
       console.log("Switched to audio file index:", result.currentIndex);
+
+      setAppStatus("Play"); // 更新全局状态
     } catch (error) {
       console.error("Error switching audio file:", error);
     } finally {
@@ -90,7 +92,7 @@ export default function SwitchAudioButton() {
   };
 
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center" }}>
       {audioIsInitialized && (
         <button
           onClick={handleSwitchClick}
@@ -111,6 +113,17 @@ export default function SwitchAudioButton() {
         >
           {isSwitching ? "Switching..." : "Switch"}
         </button>
+      )}
+      {appStatus === "Switch" && (
+        <div
+          style={{
+            width: "20px",
+            height: "20px",
+            backgroundColor: "green",
+            borderRadius: "50%",
+            marginLeft: "10px",
+          }}
+        ></div>
       )}
     </div>
   );

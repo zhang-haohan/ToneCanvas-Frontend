@@ -8,7 +8,7 @@ export default function PitchAudioButton() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const { audioIsInitialized } = usePointerContext(); // 读取音频初始化状态
+    const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
 
     // 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
@@ -50,6 +50,7 @@ export default function PitchAudioButton() {
                     setAudio(newAudio);
                     setIsPlaying(true);
                     setConnectionStatus("Connected");
+                    setAppStatus("Switch"); // 更新全局状态
                     console.log("Pitch audio playback started");
                 }).catch((error) => {
                     console.error("Error playing pitch audio:", error);
@@ -77,7 +78,7 @@ export default function PitchAudioButton() {
     };
 
     return (
-        <div>
+        <div style={{ display: "flex", alignItems: "center" }}>
             {audioIsInitialized && (
                 <button
                     onClick={handlePlayClick}
@@ -97,6 +98,17 @@ export default function PitchAudioButton() {
                 >
                     {isPlaying ? "Stop" : "Play Pitch"}
                 </button>
+            )}
+            {appStatus === "Pitch" && (
+                <div
+                    style={{
+                        width: "20px",
+                        height: "20px",
+                        backgroundColor: "green",
+                        borderRadius: "50%",
+                        marginLeft: "10px",
+                    }}
+                ></div>
             )}
         </div>
     );

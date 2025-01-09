@@ -9,7 +9,7 @@ export default function PlayButton() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const { audioIsInitialized } = usePointerContext(); // 读取音频初始化状态
+  const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
   const {
     currentFileName,
     setCurrentFileName,
@@ -89,6 +89,7 @@ export default function PlayButton() {
             setAudio(newAudio);
             setIsPlaying(true);
             setConnectionStatus("Connected");
+            setAppStatus("Trace"); // 更新全局状态
             console.log("Audio playback started");
           })
           .catch((error) => {
@@ -115,7 +116,7 @@ export default function PlayButton() {
   };
 
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center" }}>
       {audioIsInitialized && (
         <button
           onClick={handlePlayClick}
@@ -135,6 +136,17 @@ export default function PlayButton() {
         >
           {isPlaying ? "Stop" : "Play"}
         </button>
+      )}
+      {appStatus === "Play" && (
+        <div
+          style={{
+            width: "20px",
+            height: "20px",
+            backgroundColor: "green",
+            borderRadius: "50%",
+            marginLeft: "10px",
+          }}
+        ></div>
       )}
     </div>
   );

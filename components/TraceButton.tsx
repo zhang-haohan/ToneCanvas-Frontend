@@ -8,7 +8,7 @@ import { usePointerContext } from "../contexts/PointerContext"; // 引入全局�
 export default function TraceButton() {
     const [isTraceVisible, setIsTraceVisible] = useState(false);
     const { setFrequencyRange } = useAudioRangeContext(); // 更新频率范围
-    const { audioIsInitialized } = usePointerContext(); // 获取音频初始化状态
+    const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 获取音频初始化状态和全局变量
 
     // 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
@@ -97,13 +97,14 @@ export default function TraceButton() {
 
             context.stroke();
             setIsTraceVisible(true);
+            setAppStatus("Pitch"); // 更新全局状态
         } catch (error) {
             console.error("Error fetching or drawing trace:", error);
         }
     };
 
     return (
-        <div>
+        <div style={{ display: "flex", alignItems: "center" }}>
             {audioIsInitialized && (
                 <button
                     onClick={handleTraceClick}
@@ -123,6 +124,17 @@ export default function TraceButton() {
                 >
                     {isTraceVisible ? "Hide Trace" : "Show Trace"}
                 </button>
+            )}
+            {appStatus === "Trace" && (
+                <div
+                    style={{
+                        width: "20px",
+                        height: "20px",
+                        backgroundColor: "green",
+                        borderRadius: "50%",
+                        marginLeft: "10px",
+                    }}
+                ></div>
             )}
             <canvas
                 id="trace-canvas"

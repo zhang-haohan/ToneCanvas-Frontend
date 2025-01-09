@@ -10,6 +10,8 @@ interface PointerContextType {
   setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>;
   audioIsInitialized: boolean; // 新增变量类型
   setAudioIsInitialized: React.Dispatch<React.SetStateAction<boolean>>; // 新增状态 setter
+  appStatus: string; // 新增全局状态变量类型
+  setAppStatus: React.Dispatch<React.SetStateAction<string>>; // 新增状态 setter
 }
 
 // 创建上下文
@@ -20,6 +22,7 @@ export const PointerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDrawing, setIsDrawing] = useState(false);
   const [audioIsInitialized, setAudioIsInitialized] = useState(false); // 新增状态
+  const [appStatus, setAppStatus] = useState("Play"); // 新增全局状态变量
 
   return (
     <PointerContext.Provider
@@ -30,6 +33,8 @@ export const PointerProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsDrawing,
         audioIsInitialized, // 新增变量
         setAudioIsInitialized, // 新增 setter
+        appStatus, // 新增全局状态变量
+        setAppStatus, // 新增 setter
       }}
     >
       {children}

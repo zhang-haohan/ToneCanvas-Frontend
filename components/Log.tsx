@@ -6,7 +6,7 @@ import { useAudioRangeContext } from "../contexts/AudioRange";
 import { useCorpusStatusContext } from "../contexts/CorpusStatus";
 
 export default function Log() {
-  const { position, isDrawing } = usePointerContext();
+  const { position, isDrawing, appStatus } = usePointerContext();
   const { frequencyRange } = useAudioRangeContext();
   const { currentFileName, currentIndex, totalCorpus } = useCorpusStatusContext();
 
@@ -37,6 +37,13 @@ export default function Log() {
       "color: purple; font-weight: bold;"
     );
   }, [currentFileName, currentIndex, totalCorpus]);
+
+  useEffect(() => {
+    console.log(
+      `%cAppStatus Updated: Status=${appStatus}`,
+      "color: gold; font-weight: bold;"
+    );
+  }, [appStatus]);
 
   return null;
 }

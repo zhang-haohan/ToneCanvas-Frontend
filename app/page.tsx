@@ -2,8 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Pointer from "../components/Pointer";
-import Log from "../components/Log"; // 引入 Log 组件
-import Start from "../components/Start"
+import Log from "../components/Log";
+import Start from "../components/Start";
+import Theremin from "../components/Theremin"; // 引入 Theremin 组件
+import Spark from "../components/Spark"
+import Background from "../components/Background";
+import Trace from "../components/Trace";
 
 export default function DrawPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -15,30 +19,54 @@ export default function DrawPage() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.lineCap = "round";
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "black";
-        setContext(ctx);
+
+    const resizeCanvas = () => {
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.lineCap = "round";
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = "black";
+          setContext(ctx);
+        }
       }
-    }
+    };
+
+    // 初始化画布大小
+    resizeCanvas();
+
+    // 监听窗口大小变化
+    window.addEventListener("resize", resizeCanvas);
+
+    // 清理事件监听
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+    };
   }, []);
 
   return (
     <div>
-      {/* 添加 Log 组件 */}
       <Log />
       <Start />
-      {/* 将 canvasRef 传递给 Pointer */}
+      {/* 引入 Theremin 组件 */}
+      <Theremin />
+      <Spark />
+      <Trace />
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas
         ref={canvasRef}
-        style={{ border: "1px solid black", display: "block" }}
+        style={{
+          display: "block",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+        }}
       />
+      <Background />
     </div>
   );
 }

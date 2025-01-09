@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { PointerProvider } from "../contexts/PointerContext"; // 引入 PointerProvider
+import { AudioProvider } from '../contexts/AudioContext';
+import {AudioRangeProvider} from '../contexts/AudioRange'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,9 +30,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <AudioRangeProvider> 
+        <AudioProvider> 
         <PointerProvider> {/* 使用 PointerProvider 包裹 children */}
           {children}
         </PointerProvider>
+        </AudioProvider>
+        </AudioRangeProvider>
       </body>
     </html>
   );

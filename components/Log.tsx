@@ -2,9 +2,11 @@
 
 import React, { useEffect } from "react";
 import { usePointerContext } from "../contexts/PointerContext";
+import { useAudioRangeContext } from "../contexts/AudioRange";
 
 export default function Log() {
   const { position, isDrawing } = usePointerContext();
+  const { frequencyRange } = useAudioRangeContext();
 
   useEffect(() => {
     console.log(
@@ -19,6 +21,13 @@ export default function Log() {
       console.log("%cDrawing stopped in Log", "color: red; font-weight: bold;");
     }
   }, [isDrawing]);
+
+  useEffect(() => {
+    console.log(
+      `%cAudioRange Updated: Min=${frequencyRange.min}, Max=${frequencyRange.max}`,
+      "color: yellow; font-weight: bold;"
+    );
+  }, [frequencyRange]);
 
   return null;
 }

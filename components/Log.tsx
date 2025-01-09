@@ -3,10 +3,12 @@
 import React, { useEffect } from "react";
 import { usePointerContext } from "../contexts/PointerContext";
 import { useAudioRangeContext } from "../contexts/AudioRange";
+import { useCorpusStatusContext } from "../contexts/CorpusStatus";
 
 export default function Log() {
   const { position, isDrawing } = usePointerContext();
   const { frequencyRange } = useAudioRangeContext();
+  const { currentFileName, currentIndex, totalCorpus } = useCorpusStatusContext();
 
   useEffect(() => {
     console.log(
@@ -28,6 +30,13 @@ export default function Log() {
       "color: yellow; font-weight: bold;"
     );
   }, [frequencyRange]);
+
+  useEffect(() => {
+    console.log(
+      `%cCorpusStatus Updated: File=${currentFileName}, Index=${currentIndex}, Total=${totalCorpus}`,
+      "color: purple; font-weight: bold;"
+    );
+  }, [currentFileName, currentIndex, totalCorpus]);
 
   return null;
 }

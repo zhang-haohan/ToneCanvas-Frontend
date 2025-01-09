@@ -12,6 +12,7 @@ import PlayButton from "../components/PlayButton"
 import SwitchAudioButton from "../components/SwitchAudioButton"
 import TraceButton from "@/components/TraceButton";
 import PitchAudioButton from "@/components/PitchAudioButton";
+import Progress from "@/components/Progress";
 
 
 export default function DrawPage() {
@@ -63,6 +64,7 @@ export default function DrawPage() {
       <SwitchAudioButton />
       <TraceButton />
       <PitchAudioButton />
+      <Progress />
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas
         ref={canvasRef}

@@ -99,7 +99,7 @@ export default function SwitchAudioButton() {
           disabled={isSwitching} // 禁用按钮以防止重复切换
           style={{
             position: "relative",
-            marginTop: "10%",
+            marginTop: "3%",
             marginLeft: "3%",
             padding: "10px 20px",
             fontSize: "16px",

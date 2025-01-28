@@ -110,7 +110,7 @@ export default function TraceButton() {
                     onClick={handleTraceClick}
                     style={{
                         position: "relative",
-                        marginTop: "10%",
+                        marginTop: "3%",
                         marginLeft: "3%", // 修正格式
                         padding: "10px 20px",
                         fontSize: "16px",

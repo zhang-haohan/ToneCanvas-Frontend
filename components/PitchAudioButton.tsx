@@ -84,7 +84,7 @@ export default function PitchAudioButton() {
                     onClick={handlePlayClick}
                     style={{
                         position: "relative",
-                        marginTop: "10%",
+                        marginTop: "3%",
                         marginLeft: "3%",
                         padding: "10px 20px",
                         fontSize: "16px",

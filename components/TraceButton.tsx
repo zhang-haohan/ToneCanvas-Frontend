@@ -55,8 +55,8 @@ export default function TraceButton() {
             const json = await response.json();
 
             // 更新频率范围
-            const maxFrequency = json.max_frequency * 1.15;
-            const minFrequency = json.min_frequency * 0.85;
+            const maxFrequency = json.max_frequency * 1.4;
+            const minFrequency = json.min_frequency * 0.65;
             setFrequencyRange({ min: minFrequency, max: maxFrequency });
 
             // 绘制指导线

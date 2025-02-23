@@ -4,6 +4,10 @@ import React from "react";
 import { usePointerContext } from "../contexts/PointerContext"; // 使用全局状态上下文
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 使用 CorpusStatus 上下文
 
+const fileNameMapping: Record<string, string> = {
+  "chi_t1_bao_t3.wav": "chi T1 bao T3"
+};
+
 export default function Progress() {
   const { audioIsInitialized } = usePointerContext(); // 读取音频初始化状态
   const { currentFileName, currentIndex, totalCorpus } = useCorpusStatusContext();
@@ -11,6 +15,8 @@ export default function Progress() {
   if (!audioIsInitialized) {
     return null; // 如果音频未初始化，则不显示组件
   }
+
+  const displayFileName = fileNameMapping[currentFileName] || currentFileName;
 
   return (
     <div
@@ -31,7 +37,7 @@ export default function Progress() {
           color: "black",
         }}
       >
-        {currentFileName || "No File"}
+        {displayFileName || "No File"}
       </div>
 
       {/* 显示进度条 */}

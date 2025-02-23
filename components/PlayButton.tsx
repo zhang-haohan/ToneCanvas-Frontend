@@ -134,7 +134,7 @@ export default function PlayButton() {
             zIndex: 1000,
           }}
         >
-          {isPlaying ? "Stop" : "Play"}
+          {isPlaying ? "Stop" : "Play Sound"}
         </button>
       )}
       {appStatus === "Play" && (

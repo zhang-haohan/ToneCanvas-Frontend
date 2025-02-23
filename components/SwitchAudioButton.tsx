@@ -111,7 +111,7 @@ export default function SwitchAudioButton() {
             zIndex: 1000, // 确保按钮在前端可见
           }}
         >
-          {isSwitching ? "Switching..." : "Switch"}
+          {isSwitching ? "Switching..." : "Next Word"}
         </button>
       )}
       {appStatus === "Switch" && (

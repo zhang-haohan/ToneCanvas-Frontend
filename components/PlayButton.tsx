@@ -117,10 +117,11 @@ export default function PlayButton() {
         <button
           onClick={handlePlayClick}
           style={{
-            position: "relative",
-            marginTop: "3%",
-            marginLeft: "3%",
-            padding: "10px 20px",
+            position: "absolute", // 绝对定位
+            top: "5vh",  // 距离屏幕顶部 5% 高度
+            left: "5vw", // 距离屏幕左侧 5% 宽度
+            width: "20vw", // 宽度占屏幕的 10%
+            height: "10vh", // 高度占屏幕的 10%
             fontSize: "16px",
             cursor: "pointer",
             backgroundColor: isPlaying ? "red" : "green",
@@ -146,4 +147,5 @@ export default function PlayButton() {
       )}
     </div>
   );
+  
 }

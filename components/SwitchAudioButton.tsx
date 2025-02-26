@@ -15,6 +15,8 @@ export default function SwitchAudioButton() {
     setCurrentIndex,
     totalCorpus,
     setTotalCorpus,
+    SwitchButtonPressed,
+    setSwitchButtonPressed,
   } = useCorpusStatusContext();
 
   // ✅ 统一 API 请求的 headers 处理
@@ -69,6 +71,7 @@ export default function SwitchAudioButton() {
   const handleSwitchClick = async () => {
     try {
       setIsSwitching(true);
+      setSwitchButtonPressed(true)
       await logButtonPress("Switch"); // 记录按钮按下日志
       await updateCorpusStatus(); // 更新 CorpusStatus
 
@@ -86,6 +89,7 @@ export default function SwitchAudioButton() {
       console.error("Error switching audio file:", error);
     } finally {
       setIsSwitching(false);
+      setSwitchButtonPressed(false)
     }
   };
 
@@ -96,12 +100,13 @@ export default function SwitchAudioButton() {
           onClick={handleSwitchClick}
           disabled={isSwitching} // 禁用按钮以防止重复切换
           style={{
-            position: "relative",
-            marginTop: "3%",
-            marginLeft: "3%",
-            padding: "10px 20px",
+            position: "absolute", // 绝对定位
+            top: "65vh", // 距离屏幕顶部 65% 高度
+            left: "5vw", // 距离屏幕左侧 5% 宽度
+            width: "20vw", // 宽度占屏幕的 20%
+            height: "10vh", // 高度占屏幕的 10%
             fontSize: "16px",
-            cursor: "pointer",
+            cursor: isSwitching ? "not-allowed" : "pointer",
             backgroundColor: isSwitching ? "gray" : "blue",
             color: "white",
             border: "none",
@@ -124,5 +129,5 @@ export default function SwitchAudioButton() {
         ></div>
       )}
     </div>
-  );
+  );  
 }

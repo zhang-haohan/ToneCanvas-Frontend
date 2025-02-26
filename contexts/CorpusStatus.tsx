@@ -10,6 +10,17 @@ interface CorpusStatusContextType {
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   totalCorpus: number;
   setTotalCorpus: React.Dispatch<React.SetStateAction<number>>;
+
+  PlayButtonPressed: boolean;
+  setPlayButtonPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  PitchButtonPressed: boolean;
+  setPitchButtonPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  SwitchButtonPressed: boolean;
+  setSwitchButtonPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  RecordButtonPressed: boolean;
+  setRecordButtonPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  TraceButtonPressed: boolean;
+  setTraceButtonPressed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // 创建上下文
@@ -18,12 +29,16 @@ const CorpusStatusContext = createContext<CorpusStatusContextType | undefined>(
 );
 
 // 创建 Provider
-export const CorpusStatusProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [currentFileName, setCurrentFileName] = useState<string>(""); // 当前文件名
-  const [currentIndex, setCurrentIndex] = useState<number>(0); // 当前索引
-  const [totalCorpus, setTotalCorpus] = useState<number>(0); // 总文件数
+export const CorpusStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentFileName, setCurrentFileName] = useState<string>(""); 
+  const [currentIndex, setCurrentIndex] = useState<number>(0); 
+  const [totalCorpus, setTotalCorpus] = useState<number>(0); 
+
+  const [PlayButtonPressed, setPlayButtonPressed] = useState<boolean>(false);
+  const [PitchButtonPressed, setPitchButtonPressed] = useState<boolean>(false);
+  const [SwitchButtonPressed, setSwitchButtonPressed] = useState<boolean>(false);
+  const [RecordButtonPressed, setRecordButtonPressed] = useState<boolean>(false);
+  const [TraceButtonPressed, setTraceButtonPressed] = useState<boolean>(false);
 
   return (
     <CorpusStatusContext.Provider
@@ -34,6 +49,16 @@ export const CorpusStatusProvider: React.FC<{ children: React.ReactNode }> = ({
         setCurrentIndex,
         totalCorpus,
         setTotalCorpus,
+        PlayButtonPressed,
+        setPlayButtonPressed,
+        PitchButtonPressed,
+        setPitchButtonPressed,
+        SwitchButtonPressed,
+        setSwitchButtonPressed,
+        RecordButtonPressed,
+        setRecordButtonPressed,
+        TraceButtonPressed,
+        setTraceButtonPressed,
       }}
     >
       {children}

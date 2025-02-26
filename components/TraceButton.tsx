@@ -1,24 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import config from "../public/config.json";
 import { useAudioRangeContext } from "../contexts/AudioRange";
-import { usePointerContext } from "../contexts/PointerContext"; // 引入全局音频初始化状态
+import { usePointerContext } from "../contexts/PointerContext"; 
+import { useCorpusStatusContext } from "../contexts/CorpusStatus"; 
 
 export default function TraceButton() {
     const [isTraceVisible, setIsTraceVisible] = useState(false);
-    const { setFrequencyRange } = useAudioRangeContext(); // 更新频率范围
-    const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 获取音频初始化状态和全局变量
+    const { setFrequencyRange } = useAudioRangeContext(); 
+    const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext();
+    const { SwitchButtonPressed } = useCorpusStatusContext();
 
-    // ✅ 统一 API 请求的 headers 处理
+    useEffect(() => {
+        if (SwitchButtonPressed) {
+            setIsTraceVisible(false);
+            const canvas = document.getElementById("trace-canvas") as HTMLCanvasElement;
+            if (canvas) {
+                const context = canvas.getContext("2d");
+                if (context) context.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+    }, [SwitchButtonPressed]);
+
     const getHeaders = (extraHeaders: Record<string, string> = {}) => {
         return {
-            ...config.headers, // `config.json` 里的 headers
-            ...extraHeaders,   // 组件里额外需要的 headers
+            ...config.headers,
+            ...extraHeaders,
         };
     };
 
-    // ✅ 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
         try {
             const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
@@ -26,11 +37,7 @@ export default function TraceButton() {
                 headers: getHeaders({ "Content-Type": "application/json" }),
                 body: JSON.stringify({ button_name: buttonName }),
             });
-
             if (!response.ok) throw new Error("Failed to log button press");
-
-            const result = await response.json();
-            console.log("Button press logged:", result.message);
         } catch (error) {
             console.error("Error logging button press:", error);
         }
@@ -38,10 +45,9 @@ export default function TraceButton() {
 
     const handleTraceClick = async () => {
         try {
-            await logButtonPress("Trace"); // 记录按钮按下日志
+            await logButtonPress("Trace"); 
 
             if (isTraceVisible) {
-                // 隐藏指导线
                 const canvas = document.getElementById("trace-canvas") as HTMLCanvasElement;
                 if (canvas) {
                     const context = canvas.getContext("2d");
@@ -51,28 +57,22 @@ export default function TraceButton() {
                 return;
             }
 
-            // ✅ 获取频率数据
             const response = await fetch(`${config.backendUrl}/api/get-pitch-json`, {
                 headers: getHeaders(),
             });
-
             if (!response.ok) throw new Error("Failed to fetch pitch JSON");
-
             const json = await response.json();
 
-            // 更新频率范围
             const maxFrequency = json.max_frequency * 1.4;
             const minFrequency = json.min_frequency * 0.65;
             setFrequencyRange({ min: minFrequency, max: maxFrequency });
 
-            // 绘制指导线
             const canvas = document.getElementById("trace-canvas") as HTMLCanvasElement;
             if (!canvas) return;
 
             const context = canvas.getContext("2d");
             if (!context) return;
 
-            // 设置高分辨率支持
             const dpr = window.devicePixelRatio || 1;
             canvas.width = canvas.clientWidth * dpr;
             canvas.height = canvas.clientHeight * dpr;
@@ -90,7 +90,7 @@ export default function TraceButton() {
                 const y = canvas.clientHeight - (canvas.clientHeight * ((point.frequency - minFrequency) / (maxFrequency - minFrequency)));
 
                 if (isNaN(point.frequency)) {
-                    isDrawing = false; // 断开指导线
+                    isDrawing = false;
                 } else {
                     if (!isDrawing) {
                         context.moveTo(x, y);
@@ -103,7 +103,7 @@ export default function TraceButton() {
 
             context.stroke();
             setIsTraceVisible(true);
-            setAppStatus("Pitch"); // 更新全局状态
+            setAppStatus("Pitch");
         } catch (error) {
             console.error("Error fetching or drawing trace:", error);
         }
@@ -117,7 +117,7 @@ export default function TraceButton() {
                     style={{
                         position: "relative",
                         marginTop: "3%",
-                        marginLeft: "3%", // 修正格式
+                        marginLeft: "3%",
                         padding: "10px 20px",
                         fontSize: "16px",
                         cursor: "pointer",
@@ -125,7 +125,7 @@ export default function TraceButton() {
                         color: "white",
                         border: "none",
                         borderRadius: "5px",
-                        zIndex: 1000, // 确保按钮在前端可见
+                        zIndex: 1000,
                     }}
                 >
                     {isTraceVisible ? "Hide Trace" : "Show Trace"}
@@ -147,13 +147,14 @@ export default function TraceButton() {
                 style={{
                     position: "absolute",
                     top: 0,
-                    left: 0,
-                    width: "100vw",
+                    left: "10vw",
+                    width: "85vw",
                     height: "100vh",
-                    pointerEvents: "none", // 确保不会阻碍其他交互
-                    zIndex: -1, // 确保在所有元素之下
+                    pointerEvents: "none",
+                    zIndex: -1,
                 }}
             ></canvas>
+
         </div>
     );
 }

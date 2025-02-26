@@ -115,10 +115,11 @@ export default function TraceButton() {
                 <button
                     onClick={handleTraceClick}
                     style={{
-                        position: "relative",
-                        marginTop: "3%",
-                        marginLeft: "3%",
-                        padding: "10px 20px",
+                        position: "absolute",
+                        top: "50vh",
+                        left: "5vw",
+                        width: "20vw",
+                        height: "10vh",
                         fontSize: "16px",
                         cursor: "pointer",
                         backgroundColor: isTraceVisible ? "orange" : "purple",
@@ -146,15 +147,14 @@ export default function TraceButton() {
                 id="trace-canvas"
                 style={{
                     position: "absolute",
-                    top: 0,
-                    left: "10vw",
-                    width: "85vw",
-                    height: "100vh",
+                    left: "15vw",
+                    top: "15vh",
+                    width: "80vw",
+                    height: "80vh",
                     pointerEvents: "none",
                     zIndex: -1,
                 }}
             ></canvas>
-
         </div>
     );
 }

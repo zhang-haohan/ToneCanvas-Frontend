@@ -19,50 +19,47 @@ export default function PlayButton() {
     setTotalCorpus,
   } = useCorpusStatusContext();
 
-  // 查询并更新 CorpusStatus
+  // ✅ 统一 API 请求的 headers 处理
+  const getHeaders = (extraHeaders: Record<string, string> = {}) => {
+    return {
+      ...config.headers, // `config.json` 里的 headers
+      ...extraHeaders,   // 组件里额外需要的 headers
+    };
+  };
+
+  // ✅ 更新 CorpusStatus
   const updateCorpusStatus = async () => {
     try {
-      const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`);
-      if (!fileNameResponse.ok) {
-        throw new Error("Failed to fetch file name");
-      }
+      const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`, {
+        headers: getHeaders(),
+      });
+      if (!fileNameResponse.ok) throw new Error("Failed to fetch file name");
       const fileNameData = await fileNameResponse.json();
 
-      const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`);
-      if (!progressResponse.ok) {
-        throw new Error("Failed to fetch progress");
-      }
+      const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`, {
+        headers: getHeaders(),
+      });
+      if (!progressResponse.ok) throw new Error("Failed to fetch progress");
       const progressData = await progressResponse.json();
 
-      if (fileNameData.fileName !== currentFileName) {
-        setCurrentFileName(fileNameData.fileName);
-      }
-      if (progressData.current_index !== currentIndex) {
-        setCurrentIndex(progressData.current_index);
-      }
-      if (progressData.total_files !== totalCorpus) {
-        setTotalCorpus(progressData.total_files);
-      }
+      if (fileNameData.fileName !== currentFileName) setCurrentFileName(fileNameData.fileName);
+      if (progressData.current_index !== currentIndex) setCurrentIndex(progressData.current_index);
+      if (progressData.total_files !== totalCorpus) setTotalCorpus(progressData.total_files);
     } catch (error) {
       console.error("Error updating CorpusStatus:", error);
     }
   };
 
-  // 记录按钮按下日志
+  // ✅ 记录按钮按下日志
   const logButtonPress = async (buttonName: string) => {
     try {
       const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ button_name: buttonName }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to log button press");
-      }
-
+      if (!response.ok) throw new Error("Failed to log button press");
       const result = await response.json();
       console.log("Button press logged:", result.message);
     } catch (error) {
@@ -76,15 +73,14 @@ export default function PlayButton() {
       await updateCorpusStatus(); // 更新 CorpusStatus
 
       if (!isPlaying) {
-        const response = await fetch(`${config.backendUrl}/api/get-wav-file`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch audio file");
-        }
+        const response = await fetch(`${config.backendUrl}/api/get-wav-file`, {
+          headers: getHeaders(),
+        });
+        if (!response.ok) throw new Error("Failed to fetch audio file");
         const blob = await response.blob();
 
         const newAudio = new Audio(URL.createObjectURL(blob));
-        newAudio
-          .play()
+        newAudio.play()
           .then(() => {
             setAudio(newAudio);
             setIsPlaying(true);

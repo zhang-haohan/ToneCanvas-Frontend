@@ -16,6 +16,14 @@ export default function Start() {
   const { audioIsInitialized, setAudioIsInitialized } = usePointerContext();
   const { setFrequencyRange } = useAudioRangeContext(); // 引入频率范围上下文
 
+  // ✅ 统一 API 请求的 headers 处理
+  const getHeaders = (extraHeaders: Record<string, string> = {}) => {
+    return {
+      ...config.headers, // `config.json` 里的 headers
+      ...extraHeaders,   // 组件里额外需要的 headers
+    };
+  };
+
   const handleStart = async () => {
     if (!userId.trim()) {
       setErrorMessage("User ID is required.");
@@ -23,10 +31,10 @@ export default function Start() {
     }
 
     try {
-      // 发送用户 ID 到后端
+      // ✅ 发送用户 ID 到后端
       const response = await fetch(`${config.backendUrl}/api/send-user-id`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders({ "Content-Type": "application/json" }), // ✅ 统一 headers
         body: JSON.stringify({ user_id: userId }),
       });
 
@@ -36,7 +44,7 @@ export default function Start() {
         setErrorMessage(""); // 清空错误信息
         setIsVisible(false); // 隐藏按钮
 
-        // 设置全屏
+        // ✅ 设置全屏
         if (document.documentElement.requestFullscreen) {
           document.documentElement.requestFullscreen();
         } else if ((document.documentElement as any).webkitRequestFullscreen) {
@@ -45,7 +53,7 @@ export default function Start() {
           (document.documentElement as any).msRequestFullscreen();
         }
 
-        // 初始化音频上下文并设置全局状态
+        // ✅ 初始化音频上下文并设置全局状态
         if (synth && !audioIsInitialized) {
           try {
             await Tone.start();

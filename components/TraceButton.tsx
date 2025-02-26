@@ -10,20 +10,24 @@ export default function TraceButton() {
     const { setFrequencyRange } = useAudioRangeContext(); // 更新频率范围
     const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 获取音频初始化状态和全局变量
 
-    // 记录按钮按下日志
+    // ✅ 统一 API 请求的 headers 处理
+    const getHeaders = (extraHeaders: Record<string, string> = {}) => {
+        return {
+            ...config.headers, // `config.json` 里的 headers
+            ...extraHeaders,   // 组件里额外需要的 headers
+        };
+    };
+
+    // ✅ 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
         try {
             const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getHeaders({ "Content-Type": "application/json" }),
                 body: JSON.stringify({ button_name: buttonName }),
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to log button press");
-            }
+            if (!response.ok) throw new Error("Failed to log button press");
 
             const result = await response.json();
             console.log("Button press logged:", result.message);
@@ -47,11 +51,13 @@ export default function TraceButton() {
                 return;
             }
 
-            // 获取频率数据
-            const response = await fetch(`${config.backendUrl}/api/get-pitch-json`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch pitch JSON");
-            }
+            // ✅ 获取频率数据
+            const response = await fetch(`${config.backendUrl}/api/get-pitch-json`, {
+                headers: getHeaders(),
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch pitch JSON");
+
             const json = await response.json();
 
             // 更新频率范围

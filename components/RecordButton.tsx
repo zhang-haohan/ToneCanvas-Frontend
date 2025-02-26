@@ -10,10 +10,19 @@ export default function RecordButton() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isUploaded, setIsUploaded] = useState(false); // 新增：记录上传状态
   const { audioIsInitialized } = usePointerContext();
   const { currentFileName } = useCorpusStatusContext();
 
-  // 开始录音
+  // ✅ 统一 API 请求的 headers 处理
+  const getHeaders = (extraHeaders: Record<string, string> = {}) => {
+    return {
+      ...config.headers, // `config.json` 里的 headers
+      ...extraHeaders,   // 组件里额外需要的 headers
+    };
+  };
+
+  // ✅ 开始录音
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -30,6 +39,7 @@ export default function RecordButton() {
         const completeBlob = new Blob(chunks, { type: "audio/wav" });
         setAudioBlob(completeBlob);
         setAudioUrl(URL.createObjectURL(completeBlob));
+        setIsUploaded(false); // 录制新音频后，重置上传状态
       };
 
       recorder.start();
@@ -40,7 +50,7 @@ export default function RecordButton() {
     }
   };
 
-  // 停止录音
+  // ✅ 停止录音
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
@@ -48,7 +58,7 @@ export default function RecordButton() {
     }
   };
 
-  // 上传音频
+  // ✅ 上传音频
   const uploadAudio = async () => {
     if (!audioBlob) {
       console.error("No recorded audio to upload.");
@@ -61,6 +71,7 @@ export default function RecordButton() {
 
       const response = await fetch(`${config.backendUrl}/api/upload-audio`, {
         method: "POST",
+        headers: getHeaders(), // ✅ 统一 headers
         body: formData,
       });
 
@@ -70,6 +81,7 @@ export default function RecordButton() {
 
       const result = await response.json();
       console.log("Upload successful:", result);
+      setIsUploaded(true); // 上传成功后，设置上传状态为已上传
     } catch (error) {
       console.error("Error uploading audio:", error);
     }
@@ -122,11 +134,12 @@ export default function RecordButton() {
           {audioBlob && (
             <button
               onClick={uploadAudio}
+              disabled={isUploaded} // 上传成功后禁用按钮
               style={{
                 padding: "12px 24px",
                 fontSize: "16px",
-                cursor: "pointer",
-                backgroundColor: "purple",
+                cursor: isUploaded ? "not-allowed" : "pointer", // 禁用时鼠标变为不可点击样式
+                backgroundColor: isUploaded ? "gray" : "purple", // 上传后按钮为灰色
                 color: "white",
                 border: "none",
                 borderRadius: "5px",

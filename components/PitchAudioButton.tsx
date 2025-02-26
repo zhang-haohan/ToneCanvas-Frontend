@@ -10,14 +10,20 @@ export default function PitchAudioButton() {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
 
+    // 合并 headers：确保 `config.headers` 和本地 headers 一起使用
+    const getHeaders = (extraHeaders: Record<string, string> = {}) => {
+        return {
+            ...config.headers, // `config.json` 里的 headers
+            ...extraHeaders,   // 组件里自定义的 headers
+        };
+    };
+
     // 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
         try {
             const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getHeaders({ "Content-Type": "application/json" }), // 合并 headers
                 body: JSON.stringify({ button_name: buttonName }),
             });
 
@@ -38,7 +44,10 @@ export default function PitchAudioButton() {
 
             if (!isPlaying) {
                 // 请求后端获取音频文件
-                const response = await fetch(`${config.backendUrl}/api/get-pitch-audio`);
+                const response = await fetch(`${config.backendUrl}/api/get-pitch-audio`, {
+                    headers: getHeaders(), // 合并 headers
+                });
+
                 if (!response.ok) {
                     throw new Error("Failed to fetch pitch audio file");
                 }

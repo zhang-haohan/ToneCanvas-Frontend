@@ -73,7 +73,7 @@ export default function RecordSending() {
             },
           ],
         }));
-      }, 10);
+      }, 50);
 
       setIntervalId(id);
       hasLogged.current = false;

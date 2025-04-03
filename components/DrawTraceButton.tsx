@@ -65,7 +65,7 @@ export default function DrawTraceButton() {
             zIndex: 1000,
           }}
         >
-          {isDisabled ? "Waiting..." : "Draw Trace"}
+          {isDisabled ? "Drawing..." : "Draw Trace"}
         </button>
       )}
     </>

@@ -1,18 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import config from "../public/config.json";
-import { usePointerContext } from "../contexts/PointerContext"; // 可选，保留以便后续扩展
+import { usePointerContext } from "../contexts/PointerContext";
+import { useCorpusStatusContext } from "../contexts/CorpusStatus";
 
 export default function DrawTraceButton() {
-  const { audioIsInitialized } = usePointerContext(); // 如有需要可以根据状态显示按钮
+  const { audioIsInitialized } = usePointerContext();
+  const { SwitchButtonPressed } = useCorpusStatusContext();
 
-  const getHeaders = (extraHeaders: Record<string, string> = {}) => {
-    return {
-      ...config.headers,
-      ...extraHeaders,
-    };
-  };
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const getHeaders = (extraHeaders: Record<string, string> = {}) => ({
+    ...config.headers,
+    ...extraHeaders,
+  });
 
   const logButtonPress = async (buttonName: string) => {
     try {
@@ -31,14 +33,23 @@ export default function DrawTraceButton() {
   };
 
   const handleClick = async () => {
+    setIsDisabled(true);
     await logButtonPress("DrawTrace");
   };
+
+  // 监听SwitchButtonPressed状态，重新启用按钮
+  useEffect(() => {
+    if (SwitchButtonPressed) {
+      setIsDisabled(false);
+    }
+  }, [SwitchButtonPressed]);
 
   return (
     <>
       {audioIsInitialized && (
         <button
           onClick={handleClick}
+          disabled={isDisabled}
           style={{
             position: "absolute",
             top: "20vh",
@@ -46,15 +57,15 @@ export default function DrawTraceButton() {
             width: "20vw",
             height: "10vh",
             fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "#007BFF",
+            cursor: isDisabled ? "not-allowed" : "pointer",
+            backgroundColor: isDisabled ? "gray" : "#007BFF",
             color: "white",
             border: "none",
             borderRadius: "5px",
             zIndex: 1000,
           }}
         >
-          Draw Trace
+          {isDisabled ? "Waiting..." : "Draw Trace"}
         </button>
       )}
     </>

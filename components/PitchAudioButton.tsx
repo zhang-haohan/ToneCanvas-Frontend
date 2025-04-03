@@ -93,7 +93,7 @@ export default function PitchAudioButton() {
                     onClick={handlePlayClick}
                     style={{
                         position: "absolute", // 绝对定位
-                        top: "20vh",  // 距离屏幕顶部 20% 高度
+                        top: "50vh",  // 距离屏幕顶部 20% 高度
                         left: "5vw",  // 距离屏幕左侧 5% 宽度
                         width: "20vw", // 宽度占屏幕的 20%
                         height: "10vh", // 高度占屏幕的 10%

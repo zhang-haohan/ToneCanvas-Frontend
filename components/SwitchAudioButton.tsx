@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import config from "../public/config.json";
-import { usePointerContext } from "../contexts/PointerContext"; // 使用全局状态上下文
-import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 使用 CorpusStatus 上下文
+import { usePointerContext } from "../contexts/PointerContext";
+import { useCorpusStatusContext } from "../contexts/CorpusStatus";
 
 export default function SwitchAudioButton() {
   const [isSwitching, setIsSwitching] = useState(false);
-  const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
+  const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext();
   const {
     currentFileName,
     setCurrentFileName,
@@ -19,15 +19,11 @@ export default function SwitchAudioButton() {
     setSwitchButtonPressed,
   } = useCorpusStatusContext();
 
-  // ✅ 统一 API 请求的 headers 处理
-  const getHeaders = (extraHeaders: Record<string, string> = {}) => {
-    return {
-      ...config.headers, // `config.json` 里的 headers
-      ...extraHeaders,   // 组件里额外需要的 headers
-    };
-  };
+  const getHeaders = (extraHeaders: Record<string, string> = {}) => ({
+    ...config.headers,
+    ...extraHeaders,
+  });
 
-  // ✅ 查询并更新 CorpusStatus
   const updateCorpusStatus = async () => {
     try {
       const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`, {
@@ -50,7 +46,6 @@ export default function SwitchAudioButton() {
     }
   };
 
-  // ✅ 记录按钮按下日志
   const logButtonPress = async (buttonName: string) => {
     try {
       const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
@@ -67,13 +62,12 @@ export default function SwitchAudioButton() {
     }
   };
 
-  // ✅ 处理按钮点击事件
   const handleSwitchClick = async () => {
+    setIsSwitching(true);
+    setSwitchButtonPressed(true);
+
     try {
-      setIsSwitching(true);
-      setSwitchButtonPressed(true)
-      await logButtonPress("Switch"); // 记录按钮按下日志
-      await updateCorpusStatus(); // 更新 CorpusStatus
+      await logButtonPress("Switch");
 
       const response = await fetch(`${config.backendUrl}/api/switch-wav-file`, {
         method: "POST",
@@ -84,12 +78,16 @@ export default function SwitchAudioButton() {
       const result = await response.json();
       console.log("Switched to audio file index:", result.currentIndex);
 
-      setAppStatus("Play"); // 更新全局状态
+      setAppStatus("Play"); // 更新状态为Play
+
+      // ✅ 请求最新状态，确保最新音频状态
+      await updateCorpusStatus();
+
     } catch (error) {
       console.error("Error switching audio file:", error);
     } finally {
       setIsSwitching(false);
-      setSwitchButtonPressed(false)
+      setSwitchButtonPressed(false);
     }
   };
 
@@ -98,20 +96,20 @@ export default function SwitchAudioButton() {
       {audioIsInitialized && (
         <button
           onClick={handleSwitchClick}
-          disabled={isSwitching} // 禁用按钮以防止重复切换
+          disabled={isSwitching}
           style={{
-            position: "absolute", // 绝对定位
-            top: "65vh", // 距离屏幕顶部 65% 高度
-            left: "5vw", // 距离屏幕左侧 5% 宽度
-            width: "20vw", // 宽度占屏幕的 20%
-            height: "10vh", // 高度占屏幕的 10%
+            position: "absolute",
+            top: "80vh",
+            left: "5vw",
+            width: "20vw",
+            height: "10vh",
             fontSize: "16px",
             cursor: isSwitching ? "not-allowed" : "pointer",
             backgroundColor: isSwitching ? "gray" : "blue",
             color: "white",
             border: "none",
             borderRadius: "5px",
-            zIndex: 1000, // 确保按钮在前端可见
+            zIndex: 1000,
           }}
         >
           {isSwitching ? "Switching..." : "Next Word"}
@@ -129,5 +127,5 @@ export default function SwitchAudioButton() {
         ></div>
       )}
     </div>
-  );  
+  );
 }

@@ -116,7 +116,7 @@ export default function TraceButton() {
                     onClick={handleTraceClick}
                     style={{
                         position: "absolute",
-                        top: "50vh",
+                        top: "65vh",
                         left: "5vw",
                         width: "20vw",
                         height: "10vh",

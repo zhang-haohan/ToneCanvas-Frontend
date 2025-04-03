@@ -15,6 +15,7 @@ import PitchAudioButton from "@/components/PitchAudioButton";
 import Progress from "@/components/Progress";
 import RecordSending from "@/components/RecordSending";
 import RecordButton from "@/components/RecordButton"
+import DrawTraceButton from "@/components/DrawTraceButton"
 
 
 export default function DrawPage() {
@@ -63,6 +64,7 @@ export default function DrawPage() {
       <Spark />
       <Trace />
       <PlayButton />
+      <DrawTraceButton />
       <PitchAudioButton />
       <TraceButton />
       <SwitchAudioButton />

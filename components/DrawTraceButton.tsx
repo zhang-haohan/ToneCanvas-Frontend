@@ -52,7 +52,7 @@ export default function DrawTraceButton() {
           disabled={isDisabled}
           style={{
             position: "absolute",
-            top: "20vh",
+            top: "50vh",
             left: "5vw",
             width: "20vw",
             height: "10vh",

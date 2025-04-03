@@ -88,7 +88,7 @@ export default function RecordButton() {
   };
 
   return (
-    <div style={{ position: "absolute", top: "35vh", left: "5vw", zIndex: 1000, display: "flex" }}>
+    <div style={{ position: "absolute", top: "20vh", left: "5vw", zIndex: 1000, display: "flex" }}>
       {audioIsInitialized && (
         <>
           {/* 录音按钮 */}

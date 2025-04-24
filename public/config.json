@@ -1,5 +1,5 @@
 {
-    "backendUrl": "https://76c0-40-66-41-82.ngrok-free.app",
+    "backendUrl": "https://tonecanvas.ngrok.app",
     "headers": {
       "ngrok-skip-browser-warning": "true"
     }

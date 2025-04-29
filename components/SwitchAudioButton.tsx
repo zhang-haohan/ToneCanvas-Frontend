@@ -99,10 +99,10 @@ export default function SwitchAudioButton() {
           disabled={isSwitching}
           style={{
             position: "absolute",
-            top: "65vh",
+            top: "85vh",
             left: "5vw",
             width: "20vw",
-            height: "8vh",
+            height: "10vh",
             fontSize: "16px",
             cursor: isSwitching ? "not-allowed" : "pointer",
             backgroundColor: isSwitching ? "gray" : "blue",

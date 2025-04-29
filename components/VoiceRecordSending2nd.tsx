@@ -88,7 +88,7 @@ export default function VoiceRecordSending2nd() {
   };
 
   return (
-    <div style={{ position: "absolute", top: "35vh", left: "5vw", zIndex: 1000, display: "flex" }}>
+    <div style={{ position: "absolute", top: "47vh", left: "5vw", zIndex: 1000, display: "flex" }}>
       {audioIsInitialized && (
         <>
           {/* 录音按钮 */}
@@ -96,7 +96,7 @@ export default function VoiceRecordSending2nd() {
             onClick={isRecording ? stopRecording : startRecording}
             style={{
               width: "6vw", // 三个按钮 + 2 个 3vw 的间距 = 20vw
-              height: "8vh", // 高度 10% 屏幕高度
+              height: "11vh", // 高度 10% 屏幕高度
               fontSize: "16px",
               cursor: "pointer",
               backgroundColor: isRecording ? "red" : "green",
@@ -118,7 +118,7 @@ export default function VoiceRecordSending2nd() {
               }}
               style={{
                 width: "6vw",
-                height: "8vh",
+                height: "10vh",
                 fontSize: "16px",
                 cursor: "pointer",
                 backgroundColor: "blue",
@@ -139,7 +139,7 @@ export default function VoiceRecordSending2nd() {
               disabled={isUploaded} // 上传成功后禁用按钮
               style={{
                 width: "6vw",
-                height: "8vh",
+                height: "10vh",
                 fontSize: "16px",
                 cursor: isUploaded ? "not-allowed" : "pointer",
                 backgroundColor: isUploaded ? "gray" : "purple",

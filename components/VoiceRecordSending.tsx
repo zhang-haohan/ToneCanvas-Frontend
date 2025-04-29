@@ -88,7 +88,7 @@ export default function RecordButton() {
   };
 
   return (
-    <div style={{ position: "absolute", top: "20vh", left: "5vw", zIndex: 1000, display: "flex" }}>
+    <div style={{ position: "absolute", top: "15vh", left: "5vw", zIndex: 1000, display: "flex" }}>
       {audioIsInitialized && (
         <>
           {/* 录音按钮 */}
@@ -96,7 +96,7 @@ export default function RecordButton() {
             onClick={isRecording ? stopRecording : startRecording}
             style={{
               width: "6vw", // 三个按钮 + 2 个 3vw 的间距 = 20vw
-              height: "10vh", // 高度 10% 屏幕高度
+              height: "8vh", // 高度 10% 屏幕高度
               fontSize: "16px",
               cursor: "pointer",
               backgroundColor: isRecording ? "red" : "green",
@@ -106,7 +106,7 @@ export default function RecordButton() {
               marginRight: "1vw", // 按钮间隔 3% 屏幕宽度
             }}
           >
-            {isRecording ? "Stop Recording" : "Start Recording"}
+            {isRecording ? "Stop Voice Recording" : "Start Voice Recording"}
           </button>
   
           {/* 播放按钮 */}
@@ -118,7 +118,7 @@ export default function RecordButton() {
               }}
               style={{
                 width: "6vw",
-                height: "10vh",
+                height: "8vh",
                 fontSize: "16px",
                 cursor: "pointer",
                 backgroundColor: "blue",
@@ -139,7 +139,7 @@ export default function RecordButton() {
               disabled={isUploaded} // 上传成功后禁用按钮
               style={{
                 width: "6vw",
-                height: "10vh",
+                height: "8vh",
                 fontSize: "16px",
                 cursor: isUploaded ? "not-allowed" : "pointer",
                 backgroundColor: isUploaded ? "gray" : "purple",

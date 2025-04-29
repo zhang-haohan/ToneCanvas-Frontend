@@ -116,10 +116,10 @@ export default function TraceButton() {
                     onClick={handleTraceClick}
                     style={{
                         position: "absolute",
-                        top: "50vh",
+                        top: "45vh",
                         left: "5vw",
                         width: "20vw",
-                        height: "10vh",
+                        height: "8vh",
                         fontSize: "16px",
                         cursor: "pointer",
                         backgroundColor: isTraceVisible ? "orange" : "purple",

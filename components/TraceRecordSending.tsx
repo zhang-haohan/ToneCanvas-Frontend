@@ -154,7 +154,7 @@ export default function RecordSending() {
       {audioIsInitialized && (
         <div style={{
           position: "absolute",
-          top: "63vh",
+          top: "52.5vh",
           left: "5vw",
           zIndex: 1000,
           display: "flex",
@@ -166,7 +166,7 @@ export default function RecordSending() {
             disabled={isTracing}
             style={{
               width: "6vw",
-              height: "10vh",
+              height: "8vh",
               fontSize: "16px",
               cursor: isTracing ? "not-allowed" : "pointer",
               backgroundColor: isTracing ? "gray" : "green",
@@ -183,7 +183,7 @@ export default function RecordSending() {
             onClick={handleClear}
             style={{
               width: "6vw",
-              height: "10vh",
+              height: "8vh",
               fontSize: "16px",
               cursor: "pointer",
               backgroundColor: "orange",
@@ -201,7 +201,7 @@ export default function RecordSending() {
             disabled={hasSent && !hasError}
             style={{
               width: "6vw",
-              height: "10vh",
+              height: "8vh",
               fontSize: "16px",
               cursor: hasSent && !hasError ? "not-allowed" : "pointer",
               backgroundColor: hasError ? "red" : (hasSent ? "gray" : "blue"),

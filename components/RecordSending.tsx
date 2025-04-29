@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useAudioRangeContext } from "../contexts/AudioRange";
 import { usePointerContext } from "../contexts/PointerContext";
+import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // ✅ 这里新增引入
 import config from "../public/config.json";
 
 export default function RecordSending() {
-  const { position, isDrawing, audioIsInitialized } = usePointerContext(); // ✅ 这里加 audioIsInitialized
+  const { position, isDrawing, audioIsInitialized } = usePointerContext();
   const { frequencyRange } = useAudioRangeContext();
+  const { SwitchButtonPressed } = useCorpusStatusContext(); // ✅ 读取SwitchButtonPressed
 
   const [isTracing, setIsTracing] = useState(false);
   const [traceData, setTraceData] = useState({
@@ -17,7 +19,7 @@ export default function RecordSending() {
   });
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const [hasSent, setHasSent] = useState(false);
-  const [hasError, setHasError] = useState(false); // ✅ 错误状态
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const updateScreenSize = () => {
@@ -83,6 +85,30 @@ export default function RecordSending() {
     }
   }, [isDrawing, position, isTracing]);
 
+  // ✅ 监听SwitchButtonPressed，一旦变true，就自动发送trace
+  useEffect(() => {
+    const autoSendOnSwitch = async () => {
+      if (SwitchButtonPressed) {
+        console.log("Detected SwitchButtonPressed, auto sending trace...");
+
+        if (traceData.trace_body.length > 0) {
+          const endTime = new Date().toISOString();
+          const completedTrace = { ...traceData, trace_end: endTime };
+          await sendButtonLog("Send Trace (Auto by Switch)");
+          await sendTraceToBackend(completedTrace);
+        }
+
+        // 重置组件状态
+        setIsTracing(false);
+        setHasSent(false);
+        setHasError(false);
+        setTraceData({ trace_start: "", trace_body: [], trace_end: "" });
+      }
+    };
+
+    autoSendOnSwitch();
+  }, [SwitchButtonPressed]); // 依赖SwitchButtonPressed变化
+
   const handleStart = async () => {
     await sendButtonLog("Start Trace");
     setTraceData({ trace_start: new Date().toISOString(), trace_body: [], trace_end: "" });
@@ -109,7 +135,6 @@ export default function RecordSending() {
 
     const endTime = new Date().toISOString();
     const completedTrace = { ...traceData, trace_end: endTime };
-
     console.log("Sending Trace:", JSON.stringify({ trace: completedTrace }, null, 2));
     const success = await sendTraceToBackend(completedTrace);
 
@@ -126,10 +151,10 @@ export default function RecordSending() {
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {/* 按钮们 */}
-      {audioIsInitialized && ( // ✅ 加了外层判断
+      {audioIsInitialized && (
         <div style={{
           position: "absolute",
-          top: "48vh",
+          top: "63vh",
           left: "5vw",
           zIndex: 1000,
           display: "flex",

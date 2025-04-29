@@ -6,27 +6,24 @@ import { usePointerContext } from "../contexts/PointerContext";
 import config from "../public/config.json";
 
 export default function RecordSending() {
-  const { position, isDrawing } = usePointerContext();
+  const { position, isDrawing, audioIsInitialized } = usePointerContext(); // ✅ 这里加 audioIsInitialized
   const { frequencyRange } = useAudioRangeContext();
 
-  const [isRecording, setIsRecording] = useState(false);
+  const [isTracing, setIsTracing] = useState(false);
   const [traceData, setTraceData] = useState({
     trace_start: "",
     trace_body: [] as { x: number; y: number; pitch: number; timestamp: string }[],
     trace_end: "",
   });
-
-  // 记录当前屏幕尺寸
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
+  const [hasSent, setHasSent] = useState(false);
+  const [hasError, setHasError] = useState(false); // ✅ 错误状态
 
-  // 初次加载和窗口变化时，更新屏幕尺寸
   useEffect(() => {
     const updateScreenSize = () => {
       setScreenSize({ width: window.innerWidth, height: window.innerHeight });
     };
-
-    updateScreenSize(); // 初始化
-
+    updateScreenSize();
     window.addEventListener("resize", updateScreenSize);
     return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
@@ -35,6 +32,19 @@ export default function RecordSending() {
     ...config.headers,
     ...extraHeaders,
   });
+
+  const sendButtonLog = async (buttonName: string) => {
+    try {
+      await fetch(`${config.backendUrl}/api/send-button-log`, {
+        method: "POST",
+        headers: getHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({ button_name: buttonName }),
+      });
+      console.log(`Button [${buttonName}] press logged`);
+    } catch (error) {
+      console.error("Error logging button press:", error);
+    }
+  };
 
   const mapYToFrequency = (y: number, min: number, max: number): number => {
     return min + (max - min) * (y / 100);
@@ -47,16 +57,17 @@ export default function RecordSending() {
         headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ trace }),
       });
-
-      if (!response.ok) throw new Error("Failed to send trace to backend");
+      if (!response.ok) throw new Error(`Failed to send trace: ${response.status}`);
       console.log("Trace data successfully sent to backend");
+      return true;
     } catch (error) {
       console.error("Error sending trace to backend:", error);
+      return false;
     }
   };
 
   useEffect(() => {
-    if (!isRecording) return;
+    if (!isTracing) return;
 
     if (isDrawing) {
       const timestamp = new Date().toISOString();
@@ -70,90 +81,114 @@ export default function RecordSending() {
         ],
       }));
     }
-  }, [isDrawing, position, isRecording]);
+  }, [isDrawing, position, isTracing]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
+    await sendButtonLog("Start Trace");
     setTraceData({ trace_start: new Date().toISOString(), trace_body: [], trace_end: "" });
-    setIsRecording(true);
+    setIsTracing(true);
+    setHasSent(false);
+    setHasError(false);
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
+    await sendButtonLog("Refresh Trace");
     setTraceData({ trace_start: "", trace_body: [], trace_end: "" });
+    setIsTracing(false);
+    setHasSent(false);
+    setHasError(false);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    await sendButtonLog("Send Trace");
+
+    if (traceData.trace_body.length === 0) {
+      console.warn("Trace is empty, not sending.");
+      return;
+    }
+
     const endTime = new Date().toISOString();
     const completedTrace = { ...traceData, trace_end: endTime };
 
     console.log("Sending Trace:", JSON.stringify({ trace: completedTrace }, null, 2));
-    sendTraceToBackend(completedTrace);
-    setIsRecording(false);
+    const success = await sendTraceToBackend(completedTrace);
+
+    if (success) {
+      setIsTracing(false);
+      setHasSent(true);
+      setHasError(false);
+      setTraceData({ trace_start: "", trace_body: [], trace_end: "" });
+    } else {
+      setHasError(true);
+    }
   };
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {/* 按钮们 */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <button
-          onClick={handleStart}
-          style={{
-            position: "absolute",
-            top: "20vh",
-            right: "5vw",
-            width: "15vw",
-            height: "7vh",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "green",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            marginBottom: "10px",
-            zIndex: 1000,
-          }}
-        >
-          开始
-        </button>
-        <button
-          onClick={handleClear}
-          style={{
-            position: "absolute",
-            top: "30vh",
-            right: "5vw",
-            width: "15vw",
-            height: "7vh",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "orange",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            marginBottom: "10px",
-            zIndex: 1000,
-          }}
-        >
-          刷新
-        </button>
-        <button
-          onClick={handleSend}
-          style={{
-            position: "absolute",
-            top: "40vh",
-            right: "5vw",
-            width: "15vw",
-            height: "7vh",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "blue",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            zIndex: 1000,
-          }}
-        >
-          发送
-        </button>
-      </div>
+      {audioIsInitialized && ( // ✅ 加了外层判断
+        <div style={{
+          position: "absolute",
+          top: "48vh",
+          left: "5vw",
+          zIndex: 1000,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center"
+        }}>
+          <button
+            onClick={handleStart}
+            disabled={isTracing}
+            style={{
+              width: "6vw",
+              height: "10vh",
+              fontSize: "16px",
+              cursor: isTracing ? "not-allowed" : "pointer",
+              backgroundColor: isTracing ? "gray" : "green",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              marginRight: "1vw",
+            }}
+          >
+            {isTracing ? "Tracing..." : "Start Trace"}
+          </button>
+
+          <button
+            onClick={handleClear}
+            style={{
+              width: "6vw",
+              height: "10vh",
+              fontSize: "16px",
+              cursor: "pointer",
+              backgroundColor: "orange",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              marginRight: "1vw",
+            }}
+          >
+            Refresh
+          </button>
+
+          <button
+            onClick={handleSend}
+            disabled={hasSent && !hasError}
+            style={{
+              width: "6vw",
+              height: "10vh",
+              fontSize: "16px",
+              cursor: hasSent && !hasError ? "not-allowed" : "pointer",
+              backgroundColor: hasError ? "red" : (hasSent ? "gray" : "blue"),
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+            }}
+          >
+            {hasError ? "Error" : (hasSent ? "Sent" : "Send Trace")}
+          </button>
+        </div>
+      )}
 
       {/* 小红点绘制 */}
       {traceData.trace_body.map((point, idx) => (
@@ -166,7 +201,7 @@ export default function RecordSending() {
             backgroundColor: "red",
             borderRadius: "50%",
             left: `${(screenSize.width * point.x) / 100}px`,
-            top: `${(screenSize.height * (1 - point.y / 100))}px`, // ★ 翻转Y轴
+            top: `${(screenSize.height * (1 - point.y / 100))}px`,
             transform: "translate(-50%, -50%)",
             zIndex: 500,
           }}

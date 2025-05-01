@@ -167,7 +167,8 @@ export default function RecordSending() {
             style={{
               width: "6vw",
               height: "10vh",
-              fontSize: "16px",
+              fontSize: "min(2vw, 2vh)", // 响应式字体大小
+              fontWeight: "bold",
               cursor: isTracing ? "not-allowed" : "pointer",
               backgroundColor: isTracing ? "gray" : "green",
               color: "white",
@@ -184,7 +185,8 @@ export default function RecordSending() {
             style={{
               width: "6vw",
               height: "10vh",
-              fontSize: "16px",
+              fontSize: "min(2vw, 2vh)", // 响应式字体大小
+              fontWeight: "bold",
               cursor: "pointer",
               backgroundColor: "orange",
               color: "white",
@@ -202,7 +204,8 @@ export default function RecordSending() {
             style={{
               width: "6vw",
               height: "10vh",
-              fontSize: "16px",
+              fontSize: "min(2vw, 2vh)", // 响应式字体大小
+              fontWeight: "bold",
               cursor: hasSent && !hasError ? "not-allowed" : "pointer",
               backgroundColor: hasError ? "red" : (hasSent ? "gray" : "blue"),
               color: "white",

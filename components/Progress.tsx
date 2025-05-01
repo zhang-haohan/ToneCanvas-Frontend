@@ -32,7 +32,7 @@ export default function Progress() {
       {/* 显示文件名 */}
       <div
         style={{
-          fontSize: "1.5rem",
+          fontSize: "min(4vw, 4vh)", // 响应式字体大小
           fontWeight: "bold",
           color: "black",
         }}
@@ -65,8 +65,8 @@ export default function Progress() {
       {/* 显示当前进度 */}
       <div
         style={{
-          marginTop: "5px",
-          fontSize: "1rem",
+          fontSize: "min(3vw, 3vh)", // 响应式字体大小
+          fontWeight: "bold",
           color: "gray",
         }}
       >

@@ -120,7 +120,8 @@ export default function TraceButton() {
                         left: "5vw",
                         width: "20vw",
                         height: "10vh",
-                        fontSize: "16px",
+                        fontSize: "min(4vw, 4vh)", // 响应式字体大小
+                        fontWeight: "bold",
                         cursor: "pointer",
                         backgroundColor: isTraceVisible ? "orange" : "purple",
                         color: "white",

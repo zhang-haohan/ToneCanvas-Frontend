@@ -122,7 +122,8 @@ export default function PlayButton() {
             left: "5vw", // 距离屏幕左侧 5% 宽度
             width: "20vw", // 宽度占屏幕的 10%
             height: "12vh", // 高度占屏幕的 10%
-            fontSize: "16px",
+            fontSize: "min(4vw, 4vh)", // 响应式字体大小
+            fontWeight: "bold",              // 加粗字体
             cursor: "pointer",
             backgroundColor: isPlaying ? "red" : "green",
             color: "white",

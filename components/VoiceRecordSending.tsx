@@ -97,7 +97,8 @@ export default function RecordButton() {
             style={{
               width: "6vw", // 三个按钮 + 2 个 3vw 的间距 = 20vw
               height: "12vh", // 高度 10% 屏幕高度
-              fontSize: "16px",
+              fontSize: "min(2vw, 2vh)", // 响应式字体大小
+              fontWeight: "bold",
               cursor: "pointer",
               backgroundColor: isRecording ? "red" : "green",
               color: "white",
@@ -119,7 +120,8 @@ export default function RecordButton() {
               style={{
                 width: "6vw",
                 height: "12vh",
-                fontSize: "16px",
+                fontSize: "min(2vw, 2vh)", // 响应式字体大小
+                fontWeight: "bold",
                 cursor: "pointer",
                 backgroundColor: "blue",
                 color: "white",
@@ -140,7 +142,8 @@ export default function RecordButton() {
               style={{
                 width: "6vw",
                 height: "12vh",
-                fontSize: "16px",
+                fontSize: "min(2vw, 2vh)", // 响应式字体大小
+                fontWeight: "bold",
                 cursor: isUploaded ? "not-allowed" : "pointer",
                 backgroundColor: isUploaded ? "gray" : "purple",
                 color: "white",

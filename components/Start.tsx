@@ -96,7 +96,8 @@ export default function Start() {
           style={{
             marginBottom: "10px",
             padding: "10px",
-            fontSize: "16px",
+            fontSize: "min(4vw, 4vh)", // 响应式字体大小
+            fontWeight: "bold",
             borderRadius: "5px",
             border: "1px solid #ccc",
             width: "200px",
@@ -109,7 +110,8 @@ export default function Start() {
           <span
             style={{
               color: "red",
-              fontSize: "14px",
+              fontSize: "min(4vw, 4vh)", // 响应式字体大小
+              fontWeight: "bold",
               display: "block",
               marginTop: "5px",
             }}
@@ -122,7 +124,8 @@ export default function Start() {
           disabled={!isBackendAvailable} // 后端不可用时禁用按钮
           style={{
             padding: "10px 20px",
-            fontSize: "18px",
+            fontSize: "min(4vw, 4vh)", // 响应式字体大小
+            fontWeight: "bold",
             cursor: isBackendAvailable ? "pointer" : "not-allowed",
             backgroundColor: isBackendAvailable ? "#007bff" : "gray",
             color: "white",

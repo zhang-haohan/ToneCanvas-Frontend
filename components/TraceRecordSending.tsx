@@ -149,7 +149,7 @@ export default function RecordSending() {
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", width: "100%", height: "100%" }}>
       {/* 按钮们 */}
       {audioIsInitialized && (
         <div style={{

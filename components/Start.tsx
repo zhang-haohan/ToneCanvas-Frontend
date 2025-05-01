@@ -96,7 +96,7 @@ export default function Start() {
           style={{
             marginBottom: "10px",
             padding: "10px",
-            fontSize: "min(4vw, 4vh)", // 响应式字体大小
+            fontSize: "min(2vw, 2vh)", // 响应式字体大小
             fontWeight: "bold",
             borderRadius: "5px",
             border: "1px solid #ccc",

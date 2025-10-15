@@ -25,6 +25,8 @@ export default function Start() {
   };
 
   const handleStart = async () => {
+    console.log("✅ handleStart Triggered, user ID =", userId); // <-- 加这一行！
+    
     if (!userId.trim()) {
       setErrorMessage("User ID is required.");
       return;
@@ -38,7 +40,7 @@ export default function Start() {
         body: JSON.stringify({ user_id: userId }),
       });
 
-      if (response.status === 201) {
+      if (response.status === 200 || response.status === 201) {
         const data = await response.json();
         console.log(data.message);
         setErrorMessage(""); // 清空错误信息
@@ -121,7 +123,7 @@ export default function Start() {
         )}
         <button
           onClick={handleStart}
-          disabled={!isBackendAvailable} // 后端不可用时禁用按钮
+          //disabled={!isBackendAvailable} // 后端不可用时禁用按钮
           style={{
             padding: "10px 20px",
             fontSize: "min(4vw, 4vh)", // 响应式字体大小

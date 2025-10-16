@@ -1,5 +1,5 @@
 {
-    "backendUrl": "http://127.0.0.1:5001",
+    "backendUrl": "http://172.20.144.216:3000",
     "headers": {
       "ngrok-skip-browser-warning": "true"
     }

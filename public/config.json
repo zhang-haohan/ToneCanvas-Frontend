@@ -1,8 +1,7 @@
 {
-  "backendUrl_local": "http://127.0.0.1:5001",
-  "backendUrl_cloud": "http://ip of the serveur:5000",
+  "backendUrl": "http://127.0.0.1:5001",
   "headers": {
-    "ngrok-skip-browser-warning": "true"
+    "Accept": "application/json"
   }
 }
   

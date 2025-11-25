@@ -1,5 +1,5 @@
 {
-  "backendUrl": "https://laboratoirephonetiquephonologie.fr:5000",
+  "backendUrl": "https://flask.laboratoirephonetiquephonologie.fr",
   "headers": {
     "ngrok-skip-browser-warning": "true"
   }

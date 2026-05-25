@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import config from "../public/config.json";
 import { usePointerContext } from "../contexts/PointerContext"; // 使用全局状态上下文
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 使用 CorpusStatus 上下文
+import { buildApiUrl } from "./apiUrl";
 
 export default function PlayButton() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -11,12 +12,9 @@ export default function PlayButton() {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
   const {
+    userId,
     currentFileName,
-    setCurrentFileName,
     currentIndex,
-    setCurrentIndex,
-    totalCorpus,
-    setTotalCorpus,
   } = useCorpusStatusContext();
 
   // ✅ 统一 API 请求的 headers 处理
@@ -27,33 +25,14 @@ export default function PlayButton() {
     };
   };
 
-  // ✅ 更新 CorpusStatus
-  const updateCorpusStatus = async () => {
-    try {
-      const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`, {
-        headers: getHeaders(),
-      });
-      if (!fileNameResponse.ok) throw new Error("Failed to fetch file name");
-      const fileNameData = await fileNameResponse.json();
-
-      const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`, {
-        headers: getHeaders(),
-      });
-      if (!progressResponse.ok) throw new Error("Failed to fetch progress");
-      const progressData = await progressResponse.json();
-
-      if (fileNameData.fileName !== currentFileName) setCurrentFileName(fileNameData.fileName);
-      if (progressData.current_index !== currentIndex) setCurrentIndex(progressData.current_index);
-      if (progressData.total_files !== totalCorpus) setTotalCorpus(progressData.total_files);
-    } catch (error) {
-      console.error("Error updating CorpusStatus:", error);
-    }
-  };
-
   // ✅ 记录按钮按下日志
   const logButtonPress = async (buttonName: string) => {
     try {
-      const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+      const response = await fetch(buildApiUrl("/api/send-button-log", {
+        userId,
+        currentFileName,
+        currentIndex,
+      }), {
         method: "POST",
         headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ button_name: buttonName }),
@@ -70,10 +49,13 @@ export default function PlayButton() {
   const handlePlayClick = async () => {
     try {
       await logButtonPress("Play"); // 记录按钮按下日志
-      await updateCorpusStatus(); // 更新 CorpusStatus
 
       if (!isPlaying) {
-        const response = await fetch(`${config.backendUrl}/api/get-wav-file`, {
+        const response = await fetch(buildApiUrl("/api/get-wav-file", {
+          userId,
+          currentFileName,
+          currentIndex,
+        }), {
           headers: getHeaders(),
         });
         if (!response.ok) throw new Error("Failed to fetch audio file");

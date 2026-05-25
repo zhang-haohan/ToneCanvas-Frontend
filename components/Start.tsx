@@ -5,16 +5,18 @@ import * as Tone from "tone";
 import { useAudioContext } from "../contexts/AudioContext"; // 使用音频上下文
 import { usePointerContext } from "../contexts/PointerContext"; // 使用指针上下文
 import { useAudioRangeContext } from "../contexts/AudioRange"; // 使用频率范围上下文
+import { useCorpusStatusContext } from "../contexts/CorpusStatus";
 import config from "../public/config.json";
 
 export default function Start() {
   const [isVisible, setIsVisible] = useState(true);
-  const [userId, setUserId] = useState(""); // 用户输入的用户号
+  const [userId, setInputUserId] = useState(""); // 用户输入的用户号
   const [errorMessage, setErrorMessage] = useState(""); // 错误提示信息
   const [isBackendAvailable, setIsBackendAvailable] = useState(true); // 后端状态
   const { synth } = useAudioContext();
   const { audioIsInitialized, setAudioIsInitialized } = usePointerContext();
   const { setFrequencyRange } = useAudioRangeContext(); // 引入频率范围上下文
+  const { setUserId, refreshCorpusStatus } = useCorpusStatusContext();
 
   // ✅ 统一 API 请求的 headers 处理
   const getHeaders = (extraHeaders: Record<string, string> = {}) => {
@@ -33,38 +35,45 @@ export default function Start() {
     }
 
     try {
+      const trimmedUserId = userId.trim();
       // ✅ 发送用户 ID 到后端
       const response = await fetch(`${config.backendUrl}/api/send-user-id`, {
         method: "POST",
         headers: getHeaders({ "Content-Type": "application/json" }), // ✅ 统一 headers
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({ user_id: trimmedUserId }),
       });
 
       if (response.status === 200 || response.status === 201) {
         const data = await response.json();
         console.log(data.message);
+        setUserId(trimmedUserId);
+        await refreshCorpusStatus(trimmedUserId);
         setErrorMessage(""); // 清空错误信息
+        setAudioIsInitialized(true);
+        setFrequencyRange({ min: 100, max: 8000 }); // 设置为网站中常用的范围
         setIsVisible(false); // 隐藏按钮
 
-        // ✅ 设置全屏
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if ((document.documentElement as any).webkitRequestFullscreen) {
-          (document.documentElement as any).webkitRequestFullscreen();
-        } else if ((document.documentElement as any).msRequestFullscreen) {
-          (document.documentElement as any).msRequestFullscreen();
+        // ✅ 设置全屏。Safari may reject or stall fullscreen; continue without it.
+        try {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch((error) => {
+              console.warn("Fullscreen request failed:", error);
+            });
+          } else if ((document.documentElement as any).webkitRequestFullscreen) {
+            (document.documentElement as any).webkitRequestFullscreen();
+          } else if ((document.documentElement as any).msRequestFullscreen) {
+            (document.documentElement as any).msRequestFullscreen();
+          }
+        } catch (error) {
+          console.warn("Fullscreen request failed:", error);
         }
 
-        // ✅ 初始化音频上下文并设置全局状态
+        // ✅ 初始化音频上下文。Safari can fail here; the UI should still load.
         if (synth && !audioIsInitialized) {
           try {
             await Tone.start();
-            setAudioIsInitialized(true); // 更新音频初始化状态为 true
-
-            // 设置音频频率范围
-            setFrequencyRange({ min: 100, max: 8000 }); // 设置为网站中常用的范围
           } catch (error) {
-            console.error("Error initializing audio context:", error);
+            console.warn("Audio context initialization failed:", error);
           }
         }
       } else if (response.status === 400) {
@@ -93,7 +102,7 @@ export default function Start() {
         <input
           type="text"
           value={userId}
-          onChange={(e) => setUserId(e.target.value)}
+          onChange={(e) => setInputUserId(e.target.value)}
           placeholder="Enter your User ID"
           style={{
             marginBottom: "10px",

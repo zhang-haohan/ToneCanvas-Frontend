@@ -5,11 +5,17 @@ import { useAudioRangeContext } from "../contexts/AudioRange";
 import { usePointerContext } from "../contexts/PointerContext";
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // ✅ 这里新增引入
 import config from "../public/config.json";
+import { buildApiUrl } from "./apiUrl";
 
 export default function RecordSending() {
   const { position, isDrawing, audioIsInitialized } = usePointerContext();
   const { frequencyRange } = useAudioRangeContext();
-  const { SwitchButtonPressed } = useCorpusStatusContext(); // ✅ 读取SwitchButtonPressed
+  const {
+    userId,
+    currentFileName,
+    currentIndex,
+    SwitchButtonPressed,
+  } = useCorpusStatusContext(); // ✅ 读取SwitchButtonPressed
 
   const [isTracing, setIsTracing] = useState(false);
   const [traceData, setTraceData] = useState({
@@ -37,7 +43,11 @@ export default function RecordSending() {
 
   const sendButtonLog = async (buttonName: string) => {
     try {
-      await fetch(`${config.backendUrl}/api/send-button-log`, {
+      await fetch(buildApiUrl("/api/send-button-log", {
+        userId,
+        currentFileName,
+        currentIndex,
+      }), {
         method: "POST",
         headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ button_name: buttonName }),
@@ -54,7 +64,11 @@ export default function RecordSending() {
 
   const sendTraceToBackend = async (trace: typeof traceData) => {
     try {
-      const response = await fetch(`${config.backendUrl}/api/send-trace`, {
+      const response = await fetch(buildApiUrl("/api/send-trace", {
+        userId,
+        currentFileName,
+        currentIndex,
+      }), {
         method: "POST",
         headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ trace }),

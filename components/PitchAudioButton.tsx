@@ -3,12 +3,15 @@
 import React, { useState } from "react";
 import config from "../public/config.json";
 import { usePointerContext } from "../contexts/PointerContext"; // 使用全局状态上下文
+import { useCorpusStatusContext } from "../contexts/CorpusStatus";
+import { buildApiUrl } from "./apiUrl";
 
 export default function PitchAudioButton() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext(); // 读取音频初始化状态和全局变量
+    const { userId, currentFileName, currentIndex } = useCorpusStatusContext();
 
     // 合并 headers：确保 `config.headers` 和本地 headers 一起使用
     const getHeaders = (extraHeaders: Record<string, string> = {}) => {
@@ -21,7 +24,11 @@ export default function PitchAudioButton() {
     // 记录按钮按下日志
     const logButtonPress = async (buttonName: string) => {
         try {
-            const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+            const response = await fetch(buildApiUrl("/api/send-button-log", {
+                userId,
+                currentFileName,
+                currentIndex,
+            }), {
                 method: "POST",
                 headers: getHeaders({ "Content-Type": "application/json" }), // 合并 headers
                 body: JSON.stringify({ button_name: buttonName }),
@@ -44,7 +51,11 @@ export default function PitchAudioButton() {
 
             if (!isPlaying) {
                 // 请求后端获取音频文件
-                const response = await fetch(`${config.backendUrl}/api/get-pitch-audio`, {
+                const response = await fetch(buildApiUrl("/api/get-pitch-audio", {
+                    userId,
+                    currentFileName,
+                    currentIndex,
+                }), {
                     headers: getHeaders(), // 合并 headers
                 });
 

@@ -16,6 +16,7 @@ import Progress from "@/components/Progress";
 import RecordSending from "@/components/TraceRecordSending";
 import RecordButton from "@/components/VoiceRecordSending"
 import VoiceRecordSending2nd from "@/components/VoiceRecordSending2nd";
+import CompletionOverlay from "@/components/CompletionOverlay";
 
 
 export default function DrawPage() {
@@ -69,6 +70,7 @@ export default function DrawPage() {
       <SwitchAudioButton />
       <RecordButton/>
       <Progress />
+      <CompletionOverlay />
       <RecordSending />
       <VoiceRecordSending2nd />
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />

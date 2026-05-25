@@ -5,12 +5,18 @@ import config from "../public/config.json";
 import { useAudioRangeContext } from "../contexts/AudioRange";
 import { usePointerContext } from "../contexts/PointerContext"; 
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; 
+import { buildApiUrl } from "./apiUrl";
 
 export default function TraceButton() {
     const [isTraceVisible, setIsTraceVisible] = useState(false);
     const { setFrequencyRange } = useAudioRangeContext(); 
     const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext();
-    const { SwitchButtonPressed } = useCorpusStatusContext();
+    const {
+        userId,
+        currentFileName,
+        currentIndex,
+        SwitchButtonPressed,
+    } = useCorpusStatusContext();
 
     useEffect(() => {
         if (SwitchButtonPressed) {
@@ -32,7 +38,11 @@ export default function TraceButton() {
 
     const logButtonPress = async (buttonName: string) => {
         try {
-            const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+            const response = await fetch(buildApiUrl("/api/send-button-log", {
+                userId,
+                currentFileName,
+                currentIndex,
+            }), {
                 method: "POST",
                 headers: getHeaders({ "Content-Type": "application/json" }),
                 body: JSON.stringify({ button_name: buttonName }),
@@ -57,7 +67,11 @@ export default function TraceButton() {
                 return;
             }
 
-            const response = await fetch(`${config.backendUrl}/api/get-pitch-json`, {
+            const response = await fetch(buildApiUrl("/api/get-pitch-json", {
+                userId,
+                currentFileName,
+                currentIndex,
+            }), {
                 headers: getHeaders(),
             });
             if (!response.ok) throw new Error("Failed to fetch pitch JSON");

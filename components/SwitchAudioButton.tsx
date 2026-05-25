@@ -4,18 +4,17 @@ import React, { useState } from "react";
 import config from "../public/config.json";
 import { usePointerContext } from "../contexts/PointerContext";
 import { useCorpusStatusContext } from "../contexts/CorpusStatus";
+import { buildApiUrl } from "./apiUrl";
 
 export default function SwitchAudioButton() {
   const [isSwitching, setIsSwitching] = useState(false);
   const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext();
   const {
+    userId,
     currentFileName,
-    setCurrentFileName,
     currentIndex,
-    setCurrentIndex,
-    totalCorpus,
-    setTotalCorpus,
-    SwitchButtonPressed,
+    refreshCorpusStatus,
+    setIsFinished,
     setSwitchButtonPressed,
   } = useCorpusStatusContext();
 
@@ -24,31 +23,13 @@ export default function SwitchAudioButton() {
     ...extraHeaders,
   });
 
-  const updateCorpusStatus = async () => {
-    try {
-      const fileNameResponse = await fetch(`${config.backendUrl}/api/get-file-name`, {
-        headers: getHeaders(),
-      });
-      if (!fileNameResponse.ok) throw new Error("Failed to fetch file name");
-      const fileNameData = await fileNameResponse.json();
-
-      const progressResponse = await fetch(`${config.backendUrl}/api/get-progress`, {
-        headers: getHeaders(),
-      });
-      if (!progressResponse.ok) throw new Error("Failed to fetch progress");
-      const progressData = await progressResponse.json();
-
-      if (fileNameData.fileName !== currentFileName) setCurrentFileName(fileNameData.fileName);
-      if (progressData.current_index !== currentIndex) setCurrentIndex(progressData.current_index);
-      if (progressData.total_files !== totalCorpus) setTotalCorpus(progressData.total_files);
-    } catch (error) {
-      console.error("Error updating CorpusStatus:", error);
-    }
-  };
-
   const logButtonPress = async (buttonName: string) => {
     try {
-      const response = await fetch(`${config.backendUrl}/api/send-button-log`, {
+      const response = await fetch(buildApiUrl("/api/send-button-log", {
+        userId,
+        currentFileName,
+        currentIndex,
+      }), {
         method: "POST",
         headers: getHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ button_name: buttonName }),
@@ -69,7 +50,9 @@ export default function SwitchAudioButton() {
     try {
       await logButtonPress("Switch");
 
-      const response = await fetch(`${config.backendUrl}/api/switch-wav-file`, {
+      const response = await fetch(buildApiUrl("/api/switch-wav-file", {
+        userId,
+      }), {
         method: "POST",
         headers: getHeaders(),
       });
@@ -77,11 +60,12 @@ export default function SwitchAudioButton() {
       if (!response.ok) throw new Error("Failed to switch audio file");
       const result = await response.json();
       console.log("Switched to audio file index:", result.currentIndex);
+      setIsFinished(Boolean(result.isFinished));
 
       setAppStatus("Play"); // 更新状态为Play
 
       // ✅ 请求最新状态，确保最新音频状态
-      await updateCorpusStatus();
+      await refreshCorpusStatus();
 
     } catch (error) {
       console.error("Error switching audio file:", error);

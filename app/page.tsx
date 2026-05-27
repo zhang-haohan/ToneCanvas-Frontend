@@ -17,6 +17,8 @@ import RecordSending from "@/components/TraceRecordSending";
 import RecordButton from "@/components/VoiceRecordSending"
 import VoiceRecordSending2nd from "@/components/VoiceRecordSending2nd";
 import CompletionOverlay from "@/components/CompletionOverlay";
+import IPhoneDrawSound from "@/components/IPhoneDrawSound";
+import { isIPhoneAudioDevice } from "@/components/iPhoneAudio";
 
 
 export default function DrawPage() {
@@ -28,6 +30,10 @@ export default function DrawPage() {
   };
 
   useEffect(() => {
+    if (isIPhoneAudioDevice()) {
+      document.documentElement.dataset.device = "iphone";
+    }
+
     const canvas = canvasRef.current;
 
     const resizeCanvas = () => {
@@ -53,11 +59,14 @@ export default function DrawPage() {
     // 清理事件监听
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      if (document.documentElement.dataset.device === "iphone") {
+        delete document.documentElement.dataset.device;
+      }
     };
   }, []);
 
   return (
-    <div>
+    <div className="tone-app">
       <Log />
       <Start />
       {/* 引入 Theremin 组件 */}
@@ -73,9 +82,11 @@ export default function DrawPage() {
       <CompletionOverlay />
       <RecordSending />
       <VoiceRecordSending2nd />
+      <IPhoneDrawSound />
       <Pointer canvasRef={canvasRef} onPointerUpdate={handlePointerUpdate} />
       <canvas
         ref={canvasRef}
+        className="tone-main-canvas"
         style={{
           display: "block",
           position: "absolute",

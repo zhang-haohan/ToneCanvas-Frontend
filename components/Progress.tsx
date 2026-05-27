@@ -20,6 +20,7 @@ export default function Progress() {
 
   return (
     <div
+      className="tone-progress"
       style={{
         position: "absolute",
         top: "7%",
@@ -31,6 +32,7 @@ export default function Progress() {
     >
       {/* 显示文件名 */}
       <div
+        className="tone-progress-title"
         style={{
           fontSize: "min(4vw, 4vh)", // 响应式字体大小
           fontWeight: "bold",
@@ -42,6 +44,7 @@ export default function Progress() {
 
       {/* 显示进度条 */}
       <div
+        className="tone-progress-bar"
         style={{
           marginTop: "10px",
           width: "50%",
@@ -64,6 +67,7 @@ export default function Progress() {
 
       {/* 显示当前进度 */}
       <div
+        className="tone-progress-text"
         style={{
           fontSize: "min(3vw, 3vh)", // 响应式字体大小
           fontWeight: "bold",

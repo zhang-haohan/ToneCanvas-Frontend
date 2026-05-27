@@ -19,3 +19,243 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html[data-device="iphone"],
+html[data-device="iphone"] body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #ffffff;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+
+html[data-device="iphone"] {
+  --iphone-safe-top: env(safe-area-inset-top, 0px);
+  --iphone-safe-right: env(safe-area-inset-right, 0px);
+  --iphone-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --iphone-safe-left: env(safe-area-inset-left, 0px);
+  --iphone-left: max(10px, calc(var(--iphone-safe-left) + 8px));
+  --iphone-top: max(8px, calc(var(--iphone-safe-top) + 6px));
+  --iphone-panel-width: clamp(124px, 34vw, 146px);
+  --iphone-large-height: clamp(54px, 7.3dvh, 66px);
+  --iphone-small-height: clamp(40px, 5.8dvh, 48px);
+  --iphone-button-gap: 6px;
+  --iphone-stage-left: calc(var(--iphone-left) + var(--iphone-panel-width) + 10px);
+  --iphone-stage-width: calc(100vw - var(--iphone-stage-left) - var(--iphone-safe-right) - 10px);
+}
+
+html[data-device="iphone"] .tone-app {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #ffffff;
+  touch-action: none;
+}
+
+html[data-device="iphone"] .tone-main-canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 20 !important;
+  touch-action: none !important;
+}
+
+html[data-device="iphone"] .tone-btn {
+  position: fixed !important;
+  left: var(--iphone-left) !important;
+  width: var(--iphone-panel-width) !important;
+  height: var(--iphone-large-height) !important;
+  border-radius: 7px !important;
+  padding: 0 6px !important;
+  box-sizing: border-box !important;
+  font-size: clamp(17px, 4.6vw, 24px) !important;
+  line-height: 1.08 !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  z-index: 1000 !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-device="iphone"] .tone-btn-play {
+  top: calc(var(--iphone-top) + 12px) !important;
+}
+
+html[data-device="iphone"] .tone-btn-pitch {
+  top: calc(var(--iphone-top) + 146px) !important;
+}
+
+html[data-device="iphone"] .tone-btn-trace {
+  top: calc(var(--iphone-top) + 280px) !important;
+}
+
+html[data-device="iphone"] .tone-btn-next {
+  top: calc(var(--iphone-top) + 414px) !important;
+}
+
+html[data-device="iphone"] .tone-record-row {
+  position: fixed !important;
+  left: var(--iphone-left) !important;
+  width: var(--iphone-panel-width) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: var(--iphone-button-gap) !important;
+  z-index: 1000 !important;
+}
+
+html[data-device="iphone"] .tone-record-row-voice {
+  top: calc(var(--iphone-top) + 90px) !important;
+}
+
+html[data-device="iphone"] .tone-record-row-pitch {
+  top: calc(var(--iphone-top) + 220px) !important;
+}
+
+html[data-device="iphone"] .tone-record-row-trace {
+  top: calc(var(--iphone-top) + 354px) !important;
+}
+
+html[data-device="iphone"] .tone-small-btn {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: var(--iphone-small-height) !important;
+  margin: 0 !important;
+  border-radius: 7px !important;
+  padding: 2px 3px !important;
+  box-sizing: border-box !important;
+  font-size: clamp(10px, 2.8vw, 12px) !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  word-break: break-word !important;
+  text-align: center !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-device="iphone"] .tone-record-row .tone-small-btn:only-child {
+  width: var(--iphone-panel-width) !important;
+}
+
+html[data-device="iphone"] .tone-progress {
+  position: fixed !important;
+  top: calc(var(--iphone-top) + 10px) !important;
+  left: var(--iphone-stage-left) !important;
+  width: var(--iphone-stage-width) !important;
+  transform: none !important;
+  text-align: center !important;
+  z-index: 1000 !important;
+}
+
+html[data-device="iphone"] .tone-progress-title {
+  max-width: 100% !important;
+  font-size: clamp(17px, 5.4vw, 27px) !important;
+  line-height: 1.05 !important;
+  overflow-wrap: anywhere !important;
+}
+
+html[data-device="iphone"] .tone-progress-bar {
+  width: 62% !important;
+  height: 5px !important;
+  margin-top: 7px !important;
+}
+
+html[data-device="iphone"] .tone-progress-text {
+  margin-top: 6px !important;
+  font-size: clamp(14px, 4.1vw, 20px) !important;
+  line-height: 1.1 !important;
+}
+
+html[data-device="iphone"] .tone-trace-canvas {
+  position: fixed !important;
+  left: var(--iphone-stage-left) !important;
+  top: calc(var(--iphone-top) + 92px) !important;
+  width: var(--iphone-stage-width) !important;
+  height: calc(100dvh - var(--iphone-top) - var(--iphone-safe-bottom) - 110px) !important;
+  min-height: 320px !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+@media (orientation: landscape) {
+  html[data-device="iphone"] {
+    --iphone-left: max(8px, calc(var(--iphone-safe-left) + 8px));
+    --iphone-top: max(3px, calc(var(--iphone-safe-top) + 3px));
+    --iphone-panel-width: clamp(128px, 15vw, 148px);
+    --iphone-large-height: clamp(28px, 8.6dvh, 32px);
+    --iphone-small-height: clamp(24px, 7.2dvh, 28px);
+    --iphone-stage-left: calc(var(--iphone-left) + var(--iphone-panel-width) + 12px);
+    --iphone-stage-width: calc(100vw - var(--iphone-stage-left) - var(--iphone-safe-right) - 16px);
+  }
+
+  html[data-device="iphone"] .tone-btn {
+    padding: 0 5px !important;
+    font-size: clamp(14px, 1.85vw, 18px) !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-device="iphone"] .tone-btn-play {
+    top: calc(var(--iphone-top) + 4px) !important;
+  }
+
+  html[data-device="iphone"] .tone-record-row-voice {
+    top: calc(var(--iphone-top) + 38px) !important;
+  }
+
+  html[data-device="iphone"] .tone-btn-pitch {
+    top: calc(var(--iphone-top) + 68px) !important;
+  }
+
+  html[data-device="iphone"] .tone-record-row-pitch {
+    top: calc(var(--iphone-top) + 102px) !important;
+  }
+
+  html[data-device="iphone"] .tone-btn-trace {
+    top: calc(var(--iphone-top) + 132px) !important;
+  }
+
+  html[data-device="iphone"] .tone-record-row-trace {
+    top: calc(var(--iphone-top) + 166px) !important;
+  }
+
+  html[data-device="iphone"] .tone-btn-next {
+    top: calc(var(--iphone-top) + 196px) !important;
+    bottom: auto !important;
+  }
+
+  html[data-device="iphone"] .tone-small-btn {
+    padding: 1px 2px !important;
+    font-size: clamp(7.5px, 1.2vw, 10px) !important;
+    line-height: 1 !important;
+  }
+
+  html[data-device="iphone"] .tone-progress {
+    top: calc(var(--iphone-top) + 8px) !important;
+  }
+
+  html[data-device="iphone"] .tone-progress-title {
+    font-size: clamp(24px, 3.3vw, 34px) !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-device="iphone"] .tone-progress-text {
+    font-size: clamp(18px, 2.55vw, 26px) !important;
+    margin-top: 5px !important;
+  }
+
+  html[data-device="iphone"] .tone-trace-canvas {
+    top: calc(var(--iphone-top) + 74px) !important;
+    height: calc(100dvh - var(--iphone-top) - var(--iphone-safe-bottom) - 92px) !important;
+    min-height: 160px !important;
+  }
+}

@@ -163,10 +163,10 @@ export default function RecordSending() {
   };
 
   return (
-    <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+    <div className="tone-trace-recording" style={{ position: "absolute", width: "100%", height: "100%" }}>
       {/* 按钮们 */}
       {audioIsInitialized && (
-        <div style={{
+        <div className="tone-record-row tone-record-row-trace" style={{
           position: "absolute",
           top: "70vh",
           left: "5vw",
@@ -176,6 +176,7 @@ export default function RecordSending() {
           alignItems: "center"
         }}>
           <button
+            className="tone-small-btn"
             onClick={handleStart}
             disabled={isTracing}
             style={{
@@ -195,6 +196,7 @@ export default function RecordSending() {
           </button>
 
           <button
+            className="tone-small-btn"
             onClick={handleClear}
             style={{
               width: "6vw",
@@ -213,6 +215,7 @@ export default function RecordSending() {
           </button>
 
           <button
+            className="tone-small-btn"
             onClick={handleSend}
             disabled={hasSent && !hasError}
             style={{

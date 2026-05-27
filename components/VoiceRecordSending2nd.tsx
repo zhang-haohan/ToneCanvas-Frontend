@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import config from "../public/config.json";
 import { usePointerContext } from "../contexts/PointerContext"; // 读取全局状态
 import { useCorpusStatusContext } from "../contexts/CorpusStatus"; // 读取 CorpusStatus
+import { buildApiUrl } from "./apiUrl";
 
 export default function VoiceRecordSending2nd() {
   const [isRecording, setIsRecording] = useState(false);
@@ -12,7 +13,7 @@ export default function VoiceRecordSending2nd() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isUploaded, setIsUploaded] = useState(false); // 新增：记录上传状态
   const { audioIsInitialized } = usePointerContext();
-  const { currentFileName } = useCorpusStatusContext();
+  const { userId, currentFileName, currentIndex } = useCorpusStatusContext();
 
   // ✅ 统一 API 请求的 headers 处理
   const getHeaders = (extraHeaders: Record<string, string> = {}) => {
@@ -69,7 +70,11 @@ export default function VoiceRecordSending2nd() {
       const formData = new FormData();
       formData.append("audio", audioBlob, "recording.wav");
 
-      const response = await fetch(`${config.backendUrl}/api/upload-audio`, {
+      const response = await fetch(buildApiUrl("/api/upload-audio", {
+        userId,
+        currentFileName,
+        currentIndex,
+      }), {
         method: "POST",
         headers: getHeaders(), // ✅ 统一 headers
         body: formData,
@@ -88,11 +93,12 @@ export default function VoiceRecordSending2nd() {
   };
 
   return (
-    <div style={{ position: "absolute", top: "47vh", left: "5vw", zIndex: 1000, display: "flex" }}>
+    <div className="tone-record-row tone-record-row-pitch" style={{ position: "absolute", top: "47vh", left: "5vw", zIndex: 1000, display: "flex" }}>
       {audioIsInitialized && (
         <>
           {/* 录音按钮 */}
           <button
+            className="tone-small-btn"
             onClick={isRecording ? stopRecording : startRecording}
             style={{
               width: "6vw", // 三个按钮 + 2 个 3vw 的间距 = 20vw
@@ -113,6 +119,7 @@ export default function VoiceRecordSending2nd() {
           {/* 播放按钮 */}
           {audioUrl && (
             <button
+              className="tone-small-btn"
               onClick={() => {
                 const audio = new Audio(audioUrl);
                 audio.play();
@@ -137,6 +144,7 @@ export default function VoiceRecordSending2nd() {
           {/* 上传按钮 */}
           {audioBlob && (
             <button
+              className="tone-small-btn"
               onClick={uploadAudio}
               disabled={isUploaded} // 上传成功后禁用按钮
               style={{

@@ -6,6 +6,7 @@ import { useAudioContext } from "../contexts/AudioContext"; // 使用音频上�
 import { usePointerContext } from "../contexts/PointerContext"; // 使用指针上下文
 import { useAudioRangeContext } from "../contexts/AudioRange"; // 使用频率范围上下文
 import { useCorpusStatusContext } from "../contexts/CorpusStatus";
+import { isIPhoneAudioDevice, primeIPhoneAudio } from "./iPhoneAudio";
 import config from "../public/config.json";
 
 export default function Start() {
@@ -28,6 +29,10 @@ export default function Start() {
 
   const handleStart = async () => {
     console.log("✅ handleStart Triggered, user ID =", userId); // <-- 加这一行！
+
+    if (isIPhoneAudioDevice()) {
+      void primeIPhoneAudio();
+    }
     
     if (!userId.trim()) {
       setErrorMessage("User ID is required.");
@@ -69,7 +74,7 @@ export default function Start() {
         }
 
         // ✅ 初始化音频上下文。Safari can fail here; the UI should still load.
-        if (synth && !audioIsInitialized) {
+        if (synth && !audioIsInitialized && !isIPhoneAudioDevice()) {
           try {
             await Tone.start();
           } catch (error) {

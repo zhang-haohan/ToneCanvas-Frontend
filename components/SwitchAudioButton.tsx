@@ -8,6 +8,7 @@ import { buildApiUrl } from "./apiUrl";
 
 export default function SwitchAudioButton() {
   const [isSwitching, setIsSwitching] = useState(false);
+  const [lastTouchAt, setLastTouchAt] = useState(0);
   const { audioIsInitialized, appStatus, setAppStatus } = usePointerContext();
   const {
     userId,
@@ -44,6 +45,8 @@ export default function SwitchAudioButton() {
   };
 
   const handleSwitchClick = async () => {
+    if (isSwitching) return;
+
     setIsSwitching(true);
     setSwitchButtonPressed(true);
 
@@ -79,7 +82,15 @@ export default function SwitchAudioButton() {
     <div style={{ display: "flex", alignItems: "center" }}>
       {audioIsInitialized && (
         <button
+          className="tone-btn tone-btn-next"
           onClick={handleSwitchClick}
+          onTouchStart={(event) => {
+            event.preventDefault();
+            const now = Date.now();
+            if (now - lastTouchAt < 500) return;
+            setLastTouchAt(now);
+            void handleSwitchClick();
+          }}
           disabled={isSwitching}
           style={{
             position: "absolute",

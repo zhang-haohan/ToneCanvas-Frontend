@@ -97,6 +97,7 @@ export default function PlayButton() {
     <div style={{ display: "flex", alignItems: "center" }}>
       {audioIsInitialized && (
         <button
+          className="tone-btn tone-btn-play"
           onClick={handlePlayClick}
           style={{
             position: "absolute", // 绝对定位

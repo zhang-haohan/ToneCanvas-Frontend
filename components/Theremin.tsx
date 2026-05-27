@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { useAudioContext } from "../contexts/AudioContext";
 import { usePointerContext } from "../contexts/PointerContext";
 import { useAudioRangeContext } from "../contexts/AudioRange";
+import { isIPhoneAudioDevice } from "./iPhoneAudio";
 
 const Theremin: React.FC = () => {
   const { synth } = useAudioContext(); // 获取 Tone.js 的合成器
@@ -14,6 +15,14 @@ const Theremin: React.FC = () => {
   const isPlayingRef = useRef(false);
   
   useEffect(() => {
+    if (isIPhoneAudioDevice()) {
+      if (synth && isPlayingRef.current) {
+        synth.triggerRelease();
+        isPlayingRef.current = false;
+      }
+      return;
+    }
+
     if (audioIsInitialized && isDrawing && synth) {
       // 计算频率
       const { min, max } = frequencyRange;

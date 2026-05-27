@@ -101,6 +101,7 @@ export default function PitchAudioButton() {
         <div style={{ display: "flex", alignItems: "center" }}>
             {audioIsInitialized && (
                 <button
+                    className="tone-btn tone-btn-pitch"
                     onClick={handlePlayClick}
                     style={{
                         position: "absolute", // 绝对定位

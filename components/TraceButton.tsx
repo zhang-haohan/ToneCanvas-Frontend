@@ -127,6 +127,7 @@ export default function TraceButton() {
         <div style={{ display: "flex", alignItems: "center" }}>
             {audioIsInitialized && (
                 <button
+                    className="tone-btn tone-btn-trace"
                     onClick={handleTraceClick}
                     style={{
                         position: "absolute",
@@ -160,6 +161,7 @@ export default function TraceButton() {
             )}
             <canvas
                 id="trace-canvas"
+                className="tone-trace-canvas"
                 style={{
                     position: "absolute",
                     left: "15vw",
